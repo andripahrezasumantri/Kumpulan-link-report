@@ -23,6 +23,23 @@
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
 
+    <!-- FULL SCREEN INITIAL LOADING OVERLAY -->
+    <div id="fullScreenLoader" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center z-50 transition-opacity duration-500 opacity-100">
+        <div class="bg-white/10 p-6 rounded-2xl border border-white/20 shadow-2xl flex flex-col items-center max-w-xs text-center">
+            <div class="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-500/40 mb-4 animate-bounce">
+                <i class="fa-solid fa-link"></i>
+            </div>
+            <div class="text-blue-400 text-3xl animate-spin mb-3">
+                <i class="fa-solid fa-circle-notch"></i>
+            </div>
+            <h3 class="text-white font-bold text-base tracking-wide">All In One Link Report</h3>
+            <p class="text-slate-300 text-xs mt-1">MDS 311 Banjarmasin</p>
+            <div class="mt-4 pt-3 border-t border-white/10 w-full">
+                <p id="loaderMessage" class="text-[11px] text-slate-400 font-medium animate-pulse">Sinkronisasi data Google Spreadsheet...</p>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN CONTAINER -->
     <div class="flex-1 flex flex-col md:flex-row min-h-screen">
 
@@ -55,7 +72,7 @@
                     </div>
                 </div>
 
-                <!-- ACTION BUTTON IN SIDEBAR (POSISI ATAS) -->
+                <!-- ACTION BUTTON IN SIDEBAR -->
                 <div class="p-4 border-b border-slate-800">
                     <button onclick="openModal()" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center space-x-2 transition-all">
                         <i class="fa-solid fa-plus"></i>
@@ -67,7 +84,6 @@
                 <div class="p-4">
                     <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Navigasi Tampilan</p>
                     <nav class="space-y-1">
-                        <!-- MENU DASHBOARD -->
                         <button onclick="switchTab('dashboard')" id="tabDashboard" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors bg-blue-600 text-white">
                             <span class="flex items-center"><i class="fa-solid fa-chart-pie w-6 text-left"></i> Dashboard</span>
                             <span id="countDashboardBadge" class="px-2 py-0.5 text-xs rounded-full bg-white/20">0</span>
@@ -81,7 +97,7 @@
                             <span id="countActiveBadge" class="px-2 py-0.5 text-xs rounded-full bg-slate-700">0</span>
                         </button>
                         <button onclick="switchTab('completed')" id="tabCompleted" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
-                            <span class="flex items-center"><i class="fa-solid fa-circle-check w-6 text-left"></i> Selesai (≤10 Hari)</span>
+                            <span class="flex items-center"><i class="fa-solid fa-circle-check w-6 text-left"></i> Selesai</span>
                             <span id="countCompletedBadge" class="px-2 py-0.5 text-xs rounded-full bg-slate-700">0</span>
                         </button>
                         
@@ -96,7 +112,7 @@
                 </div>
             </div>
 
-            <!-- STORE MANAGEMENT INFO (POSISI BAWAH) -->
+            <!-- STORE MANAGEMENT INFO -->
             <div class="p-6 border-t border-slate-800 mt-auto">
                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Manajemen Toko</p>
                 <div class="space-y-3">
@@ -127,13 +143,11 @@
 
             <!-- TOP NAVBAR -->
             <header class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 z-10">
-                <!-- SEARCH BOX -->
                 <div class="relative flex-1 max-w-lg">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari judul, kategori, catatan, atau link..." class="w-full pl-10 pr-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
                 </div>
 
-                <!-- ACTIONS -->
                 <div class="flex items-center space-x-3">
                     <button onclick="fetchData()" class="p-2.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl border border-slate-200 transition-colors" title="Refresh Data">
                         <i class="fa-solid fa-rotate-right"></i>
@@ -148,7 +162,6 @@
             <!-- CONTENT BODY -->
             <div class="p-6 space-y-6 max-w-7xl w-full mx-auto">
 
-                <!-- SECTION TITLE PAGE -->
                 <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                     <div>
                         <h2 id="pageTitle" class="text-xl font-bold text-slate-800">Dashboard Panel</h2>
@@ -156,9 +169,8 @@
                     </div>
                 </div>
 
-                <!-- DASHBOARD CONTAINER (MURNI VISUAL) -->
+                <!-- DASHBOARD CONTAINER -->
                 <div id="dashboardView" class="space-y-6">
-                    <!-- STATS CARDS GRID -->
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
                             <div class="flex items-center justify-between text-slate-500 mb-2">
@@ -202,16 +214,14 @@
 
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
                             <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-medium">Selesai (≤10 Hari)</span>
+                                <span class="text-xs font-medium">Selesai</span>
                                 <i class="fa-solid fa-circle-check text-emerald-500"></i>
                             </div>
                             <span id="statSelesai" class="text-2xl font-bold text-emerald-600">0</span>
                         </div>
                     </div>
 
-                    <!-- VISUAL CHARTS SECTION -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- CHART STATUS -->
                         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                             <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
                                 <i class="fa-solid fa-chart-pie text-blue-600"></i> Break Down Status Report
@@ -221,7 +231,6 @@
                             </div>
                         </div>
 
-                        <!-- CHART KATEGORI -->
                         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                             <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
                                 <i class="fa-solid fa-chart-column text-indigo-600"></i> Sebaran Kategori Report
@@ -235,7 +244,6 @@
 
                 <!-- TABLE SECTION CONTAINER -->
                 <div id="tableView" class="space-y-4 hidden">
-                    <!-- FILTER TOOLBAR -->
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
                         <div class="flex flex-wrap items-center gap-2 flex-1">
                             <select id="filterStatus" onchange="applyFilters()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -288,7 +296,6 @@
                         </div>
                     </div>
 
-                    <!-- DATA TABLE -->
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse min-w-[800px]">
@@ -304,12 +311,10 @@
                                     </tr>
                                 </thead>
                                 <tbody id="reportTableBody" class="divide-y divide-slate-200 text-sm">
-                                    <!-- Data rows generated via JavaScript -->
                                 </tbody>
                             </table>
                         </div>
 
-                        <!-- EMPTY STATE -->
                         <div id="emptyState" class="hidden p-12 text-center">
                             <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
                                 <i class="fa-regular fa-folder-open"></i>
@@ -321,7 +326,6 @@
                             </button>
                         </div>
 
-                        <!-- LOADING STATE -->
                         <div id="loadingState" class="p-12 text-center">
                             <div class="inline-block animate-spin text-blue-600 text-3xl mb-3">
                                 <i class="fa-solid fa-circle-notch"></i>
@@ -331,10 +335,9 @@
                     </div>
                 </div>
 
-                <!-- READ ME / TUTORIAL SECTION CONTAINER -->
+                <!-- READ ME CONTAINER -->
                 <div id="readmeView" class="space-y-6 hidden">
                     <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-8">
-                        <!-- BANNER INTRODUCTION -->
                         <div class="bg-gradient-to-r from-slate-900 to-blue-900 text-white p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                             <div>
                                 <h3 class="text-lg font-bold flex items-center gap-2">
@@ -347,54 +350,48 @@
                             </span>
                         </div>
 
-                        <!-- TUTORIAL GRID -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- ITEM 1: AUTO ARCHIVE 10 HARI -->
                             <div class="border border-slate-200 p-5 rounded-xl bg-slate-50/50 hover:border-blue-300 transition-colors">
                                 <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg mb-3">
-                                    <i class="fa-solid fa-box-archive"></i>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-sm">1. Aturan Auto-Archive (10 Hari)</h4>
-                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                    Setiap report yang diubah statusnya menjadi **Selesai** akan tetap tersimpan di tab <span class="font-semibold text-emerald-600">Selesai</span> selama **10 hari** sebagai bukti rekam jejak pekerjaan harian/mingguan. Setelah melewati 10 hari, report secara otomatis diarsipkan agar layar utama selalu bersih.
-                                </p>
-                            </div>
-
-                            <!-- ITEM 2: QUICK TICK MARK -->
-                            <div class="border border-slate-200 p-5 rounded-xl bg-slate-50/50 hover:border-blue-300 transition-colors">
-                                <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg mb-3">
                                     <i class="fa-solid fa-circle-check"></i>
                                 </div>
-                                <h4 class="font-bold text-slate-800 text-sm">2. Centang Cepat (1-Click Finish)</h4>
+                                <h4 class="font-bold text-slate-800 text-sm">1. Centang Cepat (1-Click Finish)</h4>
                                 <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                    Selesaikan report tanpa membuka form edit! Cukup klik **lingkaran centang** di sebelah kiri judul report pada tabel. Status akan berubah seketika menjadi **✓ Selesai**, judul dicoret, dan angka pada stat cards diperbarui otomatis.
+                                    Selesaikan report tanpa membuka form edit! Cukup klik **lingkaran centang** di sebelah kiri judul report pada tabel. Status akan berubah seketika menjadi **✓ Selesai**, judul dicoret, dan tersinkron langsung ke Spreadsheet.
                                 </p>
                             </div>
 
-                            <!-- ITEM 3: PENCARIAN & FILTER -->
                             <div class="border border-slate-200 p-5 rounded-xl bg-slate-50/50 hover:border-blue-300 transition-colors">
                                 <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg mb-3">
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </div>
-                                <h4 class="font-bold text-slate-800 text-sm">3. Pencarian Instan (<10 Detik)</h4>
+                                <h4 class="font-bold text-slate-800 text-sm">2. Pencarian Instan (<10 Detik)</h4>
                                 <p class="text-xs text-slate-600 mt-1 leading-relaxed">
                                     Temukan link report yang tersebar di WA, Email, atau Teams dalam hitungan detik. Gunakan kolom pencarian di navbar atas atau saring berdasarkan kategori (Finance, Operasional, HR, dll.) serta asal sumber link.
                                 </p>
                             </div>
 
-                            <!-- ITEM 4: DASHBOARD VISUAL -->
                             <div class="border border-slate-200 p-5 rounded-xl bg-slate-50/50 hover:border-blue-300 transition-colors">
                                 <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-lg mb-3">
                                     <i class="fa-solid fa-chart-pie"></i>
                                 </div>
-                                <h4 class="font-bold text-slate-800 text-sm">4. Dashboard Statistik Visual</h4>
+                                <h4 class="font-bold text-slate-800 text-sm">3. Dashboard Statistik Visual</h4>
                                 <p class="text-xs text-slate-600 mt-1 leading-relaxed">
                                     Menu **Dashboard** menyajikan ringkasan statistik angka dan grafik *doughnut/bar chart* interaktif tanpa menampilkan tabel data, memudahkan jajaran manajemen memantau progres pekerjaan toko secara cepat.
                                 </p>
                             </div>
+
+                            <div class="border border-slate-200 p-5 rounded-xl bg-slate-50/50 hover:border-blue-300 transition-colors">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg mb-3">
+                                    <i class="fa-solid fa-database"></i>
+                                </div>
+                                <h4 class="font-bold text-slate-800 text-sm">4. Integrasi Google Spreadsheet</h4>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                    Seluruh data tersimpan secara terpusat di Google Spreadsheet. Setiap penambahan, pembaruan status, atau penghapusan akan langsung diperbarui secara real-time.
+                                </p>
+                            </div>
                         </div>
 
-                        <!-- MANAGEMENT STRUCTURE INFO -->
                         <div class="border-t border-slate-200 pt-6">
                             <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Informasi Unit & Manajemen Toko</h4>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -419,7 +416,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -562,7 +558,17 @@
             setInterval(updateClock, 1000);
         }
 
+        function formatTanggalIndo(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            return d.toLocaleDateString('id-ID', options);
+        }
+
         async function fetchData() {
+            showFullScreenLoader(true, "Sinkronisasi data Google Spreadsheet...");
             showLoading(true);
             try {
                 const res = await fetch(API_URL);
@@ -580,7 +586,19 @@
                 showToast('Koneksi ke backend gagal', 'error');
             } finally {
                 showLoading(false);
+                // Memberi delay halus 400ms agar animasi transisi terasa mulus
+                setTimeout(() => {
+                    showFullScreenLoader(false);
+                }, 400);
             }
+        }
+
+        function getItemStatus(item) {
+            return item.status || item.Status || 'Belum Dikerjakan';
+        }
+
+        function getItemID(item) {
+            return item.id || item.ID || '';
         }
 
         function updateStats() {
@@ -589,21 +607,19 @@
             let sedang = 0;
             let todayCount = 0;
             let h3Count = 0;
-            let selesai10Hari = 0;
+            let selesaiCount = 0;
 
             reportsData.forEach(item => {
-                if(item.Status === 'Selesai') {
-                    // Filter Auto-Archive 10 Hari
-                    const daysCompleted = getCompletedDaysDiff(item['Updated At'] || item.Deadline);
-                    if(daysCompleted <= 10) {
-                        selesai10Hari++;
-                    }
+                const st = getItemStatus(item);
+                if(st === 'Selesai') {
+                    selesaiCount++;
                 } else {
-                    if(item.Status === 'Belum Dikerjakan') belum++;
-                    if(item.Status === 'Sedang Dikerjakan') sedang++;
+                    if(st === 'Belum Dikerjakan') belum++;
+                    if(st === 'Sedang Dikerjakan') sedang++;
 
-                    if(item.Deadline) {
-                        const diffDays = getDaysDiff(item.Deadline);
+                    const deadlineVal = item.deadline || item.Deadline;
+                    if(deadlineVal) {
+                        const diffDays = getDaysDiff(deadlineVal);
                         if(diffDays <= 0) todayCount++;
                         if(diffDays >= 0 && diffDays <= 3) h3Count++;
                     }
@@ -615,29 +631,27 @@
             document.getElementById('statSedang').innerText = sedang;
             document.getElementById('statToday').innerText = todayCount;
             document.getElementById('statH3').innerText = h3Count;
-            document.getElementById('statSelesai').innerText = selesai10Hari;
+            document.getElementById('statSelesai').innerText = selesaiCount;
 
             document.getElementById('countDashboardBadge').innerText = total;
             document.getElementById('countAllBadge').innerText = total;
             document.getElementById('countActiveBadge').innerText = (belum + sedang);
-            document.getElementById('countCompletedBadge').innerText = selesai10Hari;
+            document.getElementById('countCompletedBadge').innerText = selesaiCount;
         }
 
-        // RENDER GRAFIK VISUAL
         function renderCharts() {
             let statusCounts = { 'Belum Dikerjakan': 0, 'Sedang Dikerjakan': 0, 'Selesai': 0 };
             let catCounts = {};
 
             reportsData.forEach(item => {
-                const st = item.Status || 'Belum Dikerjakan';
+                const st = getItemStatus(item);
                 if(statusCounts[st] !== undefined) statusCounts[st]++;
                 else statusCounts[st] = 1;
 
-                const cat = item.Category || 'Lainnya';
+                const cat = item.category || item.Category || 'Lainnya';
                 catCounts[cat] = (catCounts[cat] || 0) + 1;
             });
 
-            // CHART STATUS
             const ctxStatus = document.getElementById('statusChart').getContext('2d');
             if(statusChartObj) statusChartObj.destroy();
             statusChartObj = new Chart(ctxStatus, {
@@ -657,7 +671,6 @@
                 }
             });
 
-            // CHART KATEGORI
             const ctxCategory = document.getElementById('categoryChart').getContext('2d');
             if(categoryChartObj) categoryChartObj.destroy();
             categoryChartObj = new Chart(ctxCategory, {
@@ -693,34 +706,47 @@
             }
 
             data.forEach(item => {
-                const isCompleted = item.Status === 'Selesai';
-                const daysDiff = getDaysDiff(item.Deadline);
+                const st = getItemStatus(item);
+                const isCompleted = st === 'Selesai';
+                const deadlineVal = item.deadline || item.Deadline;
+                const daysDiff = getDaysDiff(deadlineVal);
+                
+                const formattedDateText = formatTanggalIndo(deadlineVal);
 
                 const rowBg = isCompleted ? 'bg-slate-50/60' : 'hover:bg-blue-50/30';
 
                 let deadlineBadgeClass = 'bg-emerald-100 text-emerald-700';
-                let deadlineText = `${item.Deadline} (${daysDiff} hr)`;
+                let deadlineText = `${formattedDateText} (${daysDiff} hr)`;
+                
                 if(isCompleted) {
                     deadlineBadgeClass = 'bg-slate-100 text-slate-500';
-                    deadlineText = item.Deadline;
+                    deadlineText = formattedDateText;
                 } else if(daysDiff <= 0) {
                     deadlineBadgeClass = 'bg-rose-100 text-rose-700 font-bold animate-pulse';
-                    deadlineText = daysDiff === 0 ? 'Hari Ini!' : `Lewat ${Math.abs(daysDiff)} hr`;
+                    deadlineText = daysDiff === 0 ? `${formattedDateText} (Hari Ini!)` : `${formattedDateText} (Lewat ${Math.abs(daysDiff)} hr)`;
                 } else if(daysDiff <= 3) {
                     deadlineBadgeClass = 'bg-amber-100 text-amber-700 font-semibold';
-                    deadlineText = `H-${daysDiff} Hari`;
+                    deadlineText = `${formattedDateText} (H-${daysDiff})`;
                 }
 
+                const priorityVal = item.priority || item.Priority || 'Sedang';
                 let priorityClass = 'bg-slate-100 text-slate-600';
-                if(item.Priority === 'Tinggi') priorityClass = 'bg-rose-50 text-rose-600 border border-rose-200';
-                if(item.Priority === 'Sedang') priorityClass = 'bg-amber-50 text-amber-600 border border-amber-200';
-                if(item.Priority === 'Rendah') priorityClass = 'bg-emerald-50 text-emerald-600 border border-emerald-200';
+                if(priorityVal === 'Tinggi') priorityClass = 'bg-rose-50 text-rose-600 border border-rose-200';
+                if(priorityVal === 'Sedang') priorityClass = 'bg-amber-50 text-amber-600 border border-amber-200';
+                if(priorityVal === 'Rendah') priorityClass = 'bg-emerald-50 text-emerald-600 border border-emerald-200';
+
+                const itemID = getItemID(item);
+                const titleVal = item.title || item.Title || '';
+                const urlVal = item.url || item.URL || '#';
+                const notesVal = item.notes || item.Notes || '';
+                const categoryVal = item.category || item.Category || '-';
+                const sourceVal = item.source || item.Source || '-';
 
                 const tr = document.createElement('tr');
                 tr.className = `${rowBg} transition-colors border-b border-slate-200/80`;
                 tr.innerHTML = `
                     <td class="py-3 px-4 text-center">
-                        <button onclick="toggleQuickStatus('${item.ID}', '${item.Status}')" class="text-lg transition-transform active:scale-95" title="Tandai Selesai">
+                        <button onclick="toggleQuickStatus('${itemID}', '${st}')" class="text-lg transition-transform active:scale-95" title="Tandai Selesai">
                             ${isCompleted 
                                 ? '<i class="fa-solid fa-circle-check text-emerald-500"></i>' 
                                 : '<i class="fa-regular fa-circle text-slate-300 hover:text-emerald-500"></i>'}
@@ -728,11 +754,11 @@
                     </td>
                     <td class="py-3 px-4">
                         <div class="flex flex-col">
-                            <a href="${item.URL}" target="_blank" class="font-semibold ${isCompleted ? 'text-slate-400 strikethrough' : 'text-slate-800 hover:text-blue-600'} flex items-center gap-1.5">
-                                ${escapeHtml(item.Title)}
+                            <a href="${urlVal}" target="_blank" class="font-semibold ${isCompleted ? 'text-slate-400 strikethrough' : 'text-slate-800 hover:text-blue-600'} flex items-center gap-1.5">
+                                ${escapeHtml(titleVal)}
                                 <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
                             </a>
-                            ${item.Notes ? `<span class="text-xs text-slate-400 mt-0.5">${escapeHtml(item.Notes)}</span>` : ''}
+                            ${notesVal ? `<span class="text-xs text-slate-400 mt-0.5">${escapeHtml(notesVal)}</span>` : ''}
                         </div>
                     </td>
                     <td class="py-3 px-4 whitespace-nowrap">
@@ -741,27 +767,27 @@
                         </span>
                     </td>
                     <td class="py-3 px-4 whitespace-nowrap">
-                        <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium ${isCompleted ? 'bg-emerald-100 text-emerald-800' : (item.Status === 'Sedang Dikerjakan' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700')}">
-                            ${isCompleted ? '✓ Selesai' : item.Status}
+                        <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium ${isCompleted ? 'bg-emerald-100 text-emerald-800' : (st === 'Sedang Dikerjakan' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700')}">
+                            ${isCompleted ? '✓ Selesai' : st}
                         </span>
                     </td>
                     <td class="py-3 px-4 whitespace-nowrap">
                         <span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold ${priorityClass}">
-                            ${item.Priority || 'Sedang'}
+                            ${priorityVal}
                         </span>
                     </td>
                     <td class="py-3 px-4 whitespace-nowrap">
-                        <div class="text-xs text-slate-600 font-medium">${item.Category || '-'}</div>
-                        <div class="text-[11px] text-slate-400">${item.Source || '-'}</div>
+                        <div class="text-xs text-slate-600 font-medium">${categoryVal}</div>
+                        <div class="text-[11px] text-slate-400">${sourceVal}</div>
                     </td>
                     <td class="py-3 px-4 text-center whitespace-nowrap space-x-1">
-                        <button onclick="copyToClipboard('${item.URL}')" class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded-lg" title="Salin Link">
+                        <button onclick="copyToClipboard('${urlVal}')" class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded-lg" title="Salin Link">
                             <i class="fa-regular fa-copy"></i>
                         </button>
-                        <button onclick="editReport('${item.ID}')" class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-slate-100 rounded-lg" title="Edit Report">
+                        <button onclick="editReport('${itemID}')" class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-slate-100 rounded-lg" title="Edit Report">
                             <i class="fa-regular fa-pen-to-square"></i>
                         </button>
-                        <button onclick="deleteReport('${item.ID}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded-lg" title="Hapus Permanen">
+                        <button onclick="deleteReport('${itemID}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded-lg" title="Hapus Permanen">
                             <i class="fa-regular fa-trash-can"></i>
                         </button>
                     </td>
@@ -772,11 +798,14 @@
 
         async function toggleQuickStatus(id, currentStatus) {
             const newStatus = currentStatus === 'Selesai' ? 'Belum Dikerjakan' : 'Selesai';
-            const item = reportsData.find(r => r.ID === id);
+            const item = reportsData.find(r => String(getItemID(r)) === String(id));
             if(!item) return;
 
-            item.Status = newStatus;
+            if(item.status !== undefined) item.status = newStatus;
+            if(item.Status !== undefined) item.Status = newStatus;
+            
             item['Updated At'] = new Date().toISOString();
+            
             updateStats();
             renderCharts();
             applyFilters();
@@ -802,28 +831,26 @@
             const sortBy = document.getElementById('sortBy').value;
 
             let filtered = reportsData.filter(item => {
-                // LOGIKA TAB & AUTO-ARCHIVE (10 HARI)
-                if(currentTab === 'active' && item.Status === 'Selesai') return false;
+                const st = getItemStatus(item);
+                if(currentTab === 'active' && st === 'Selesai') return false;
+                if(currentTab === 'completed' && st !== 'Selesai') return false;
+
+                if(statusVal && st !== statusVal) return false;
                 
-                if(currentTab === 'completed') {
-                    if(item.Status !== 'Selesai') return false;
-                    // Auto-archive filter: Sembunyikan report selesai yang berusia > 10 hari
-                    const daysCompleted = getCompletedDaysDiff(item['Updated At'] || item.Deadline);
-                    if(daysCompleted > 10) return false;
-                }
+                const pr = item.priority || item.Priority || '';
+                if(priorityVal && pr !== priorityVal) return false;
 
-                // DROPDOWN FILTERS
-                if(statusVal && item.Status !== statusVal) return false;
-                if(priorityVal && item.Priority !== priorityVal) return false;
-                if(categoryVal && item.Category !== categoryVal) return false;
-                if(sourceVal && item.Source !== sourceVal) return false;
+                const cat = item.category || item.Category || '';
+                if(categoryVal && cat !== categoryVal) return false;
 
-                // SEARCH
+                const src = item.source || item.Source || '';
+                if(sourceVal && src !== sourceVal) return false;
+
                 if(searchVal) {
-                    const titleMatch = (item.Title || '').toLowerCase().includes(searchVal);
-                    const catMatch = (item.Category || '').toLowerCase().includes(searchVal);
-                    const notesMatch = (item.Notes || '').toLowerCase().includes(searchVal);
-                    const urlMatch = (item.URL || '').toLowerCase().includes(searchVal);
+                    const titleMatch = (item.title || item.Title || '').toLowerCase().includes(searchVal);
+                    const catMatch = (item.category || item.Category || '').toLowerCase().includes(searchVal);
+                    const notesMatch = (item.notes || item.Notes || '').toLowerCase().includes(searchVal);
+                    const urlMatch = (item.url || item.URL || '').toLowerCase().includes(searchVal);
                     if(!titleMatch && !catMatch && !notesMatch && !urlMatch) return false;
                 }
 
@@ -831,17 +858,21 @@
             });
 
             filtered.sort((a, b) => {
-                if(sortBy === 'deadline') return new Date(a.Deadline) - new Date(b.Deadline);
-                if(sortBy === 'deadline_desc') return new Date(b.Deadline) - new Date(a.Deadline);
-                if(sortBy === 'newest') return new Date(b['Created At'] || 0) - new Date(a['Created At'] || 0);
-                if(sortBy === 'oldest') return new Date(a['Created At'] || 0) - new Date(b['Created At'] || 0);
+                const deadA = a.deadline || a.Deadline || '';
+                const deadB = b.deadline || b.Deadline || '';
+                if(sortBy === 'deadline') return new Date(deadA) - new Date(deadB);
+                if(sortBy === 'deadline_desc') return new Date(deadB) - new Date(deadA);
+                
+                const createA = a['Created At'] || a['created_at'] || 0;
+                const createB = b['Created At'] || b['created_at'] || 0;
+                if(sortBy === 'newest') return new Date(createB) - new Date(createA);
+                if(sortBy === 'oldest') return new Date(createA) - new Date(createB);
                 return 0;
             });
 
             renderTable(filtered);
         }
 
-        // FUNGSI SWITCH VIEW SPA
         function switchTab(tab) {
             currentTab = tab;
 
@@ -869,7 +900,7 @@
                 document.getElementById('tabReadme').className = "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium bg-amber-600 text-white";
                 readmeView.classList.remove('hidden');
                 pageTitle.innerText = "READ ME / Documentation";
-                pageSubtitle.innerText = "Panduan cara penggunaan sistem dan aturan lifecycle report.";
+                pageSubtitle.innerText = "Panduan cara penggunaan sistem dan pengelolaan report.";
             } else {
                 tableView.classList.remove('hidden');
 
@@ -883,8 +914,8 @@
                     pageSubtitle.innerText = "Menampilkan laporan yang masih membutuhkan tindakan / penanganan.";
                 } else if(tab === 'completed') {
                     document.getElementById('tabCompleted').className = "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white";
-                    pageTitle.innerText = "Report Selesai (≤ 10 Hari)";
-                    pageSubtitle.innerText = "Menampilkan daftar laporan tuntas berusia maksimal 10 hari.";
+                    pageTitle.innerText = "Report Selesai";
+                    pageSubtitle.innerText = "Menampilkan seluruh daftar laporan yang telah tuntas dikerjakan.";
                 }
             }
 
@@ -908,15 +939,22 @@
 
             if(editData) {
                 document.getElementById('modalTitle').innerText = 'Edit Report';
-                document.getElementById('formId').value = editData.ID;
-                document.getElementById('formTitle').value = editData.Title;
-                document.getElementById('formUrl').value = editData.URL;
-                document.getElementById('formDeadline').value = editData.Deadline;
-                document.getElementById('formStatus').value = editData.Status;
-                document.getElementById('formPriority').value = editData.Priority || 'Sedang';
-                document.getElementById('formCategory').value = editData.Category || 'Operasional';
-                document.getElementById('formSource').value = editData.Source || 'Manual';
-                document.getElementById('formNotes').value = editData.Notes || '';
+                document.getElementById('formId').value = getItemID(editData);
+                document.getElementById('formTitle').value = editData.title || editData.Title || '';
+                document.getElementById('formUrl').value = editData.url || editData.URL || '';
+                
+                const rawDeadline = editData.deadline || editData.Deadline || '';
+                let formattedFormDate = rawDeadline;
+                if(rawDeadline.includes('T')) {
+                    formattedFormDate = rawDeadline.split('T')[0];
+                }
+                document.getElementById('formDeadline').value = formattedFormDate;
+
+                document.getElementById('formStatus').value = getItemStatus(editData);
+                document.getElementById('formPriority').value = editData.priority || editData.Priority || 'Sedang';
+                document.getElementById('formCategory').value = editData.category || editData.Category || 'Operasional';
+                document.getElementById('formSource').value = editData.source || editData.Source || 'Manual';
+                document.getElementById('formNotes').value = editData.notes || editData.Notes || '';
             } else {
                 document.getElementById('modalTitle').innerText = 'Tambah Report Baru';
                 form.reset();
@@ -947,7 +985,7 @@
 
             const action = id ? 'update' : 'create';
             closeModal();
-            showLoading(true);
+            showFullScreenLoader(true, "Menyimpan perubahan ke Google Spreadsheet...");
 
             try {
                 await fetch(API_URL, {
@@ -959,18 +997,18 @@
             } catch (err) {
                 console.error(err);
                 showToast('Gagal menyimpan data', 'error');
-                showLoading(false);
+                showFullScreenLoader(false);
             }
         }
 
         function editReport(id) {
-            const item = reportsData.find(r => r.ID === id);
+            const item = reportsData.find(r => String(getItemID(r)) === String(id));
             if(item) openModal(item);
         }
 
         async function deleteReport(id) {
             if(!confirm('Apakah Anda yakin ingin menghapus report ini secara permanen?')) return;
-            showLoading(true);
+            showFullScreenLoader(true, "Menghapus report dari Google Spreadsheet...");
             try {
                 await fetch(API_URL, {
                     method: 'POST',
@@ -981,7 +1019,7 @@
             } catch (err) {
                 console.error(err);
                 showToast('Gagal menghapus data', 'error');
-                showLoading(false);
+                showFullScreenLoader(false);
             }
         }
 
@@ -992,15 +1030,6 @@
             const d = new Date(deadlineStr);
             d.setHours(0,0,0,0);
             return Math.ceil((d - today) / (1000 * 60 * 60 * 24));
-        }
-
-        function getCompletedDaysDiff(dateStr) {
-            if(!dateStr) return 0;
-            const today = new Date();
-            today.setHours(0,0,0,0);
-            const d = new Date(dateStr);
-            d.setHours(0,0,0,0);
-            return Math.floor((today - d) / (1000 * 60 * 60 * 24));
         }
 
         function copyToClipboard(text) {
@@ -1023,6 +1052,29 @@
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
+        }
+
+        // FUNGSI KONTROL FULL SCREEN OVERLAY LOADING ANIMATION
+        function showFullScreenLoader(show, msg = "Sinkronisasi data Google Spreadsheet...") {
+            const loader = document.getElementById('fullScreenLoader');
+            const loaderMsg = document.getElementById('loaderMessage');
+            if (!loader) return;
+
+            if (msg) loaderMsg.innerText = msg;
+
+            if (show) {
+                loader.classList.remove('hidden');
+                setTimeout(() => {
+                    loader.classList.remove('opacity-0');
+                    loader.classList.add('opacity-100');
+                }, 10);
+            } else {
+                loader.classList.remove('opacity-100');
+                loader.classList.add('opacity-0');
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                }, 500);
+            }
         }
 
         function showLoading(show) {
