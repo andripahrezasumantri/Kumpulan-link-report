@@ -3,486 +3,408 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All In One Link Report</title>
+    <title>All In One Link Report - MDS 311 Banjarmasin</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fefce8',
+                            100: '#fef9c3',
+                            500: '#eab308',
+                            600: '#d97706',
+                            700: '#b45309',
+                        },
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .strikethrough { text-decoration: line-through; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .completed-row { background-color: rgba(248, 250, 252, 0.8); }
+        .completed-title { text-decoration: line-through; color: #94a3b8; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col md:flex-row pb-16 md:pb-0">
 
-    <!-- FULL SCREEN INITIAL LOADING OVERLAY -->
-    <div id="fullScreenLoader" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center z-50 transition-opacity duration-500 opacity-100">
-        <div class="bg-white/10 p-6 rounded-2xl border border-white/20 shadow-2xl flex flex-col items-center max-w-xs text-center">
-            <div class="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-500/40 mb-4 animate-bounce">
-                <i class="fa-solid fa-link"></i>
-            </div>
-            <div class="text-blue-400 text-3xl animate-spin mb-3">
-                <i class="fa-solid fa-circle-notch"></i>
-            </div>
-            <h3 class="text-white font-bold text-base tracking-wide">All In One Link Report</h3>
-            <p class="text-slate-300 text-xs mt-1">MDS 311 Banjarmasin</p>
-            <div class="mt-4 pt-3 border-t border-white/10 w-full">
-                <p id="loaderMessage" class="text-[11px] text-slate-400 font-medium animate-pulse">Sinkronisasi data Google Spreadsheet...</p>
+    <!-- SIDEBAR (UNTUK TAMPILAN PC / DESKTOP - ROYAL MIDNIGHT NAVY & GOLD) -->
+    <aside class="hidden md:flex flex-col w-64 bg-navy-900 border-r border-slate-800 text-slate-200 min-h-screen fixed left-0 top-0 z-30 shadow-xl">
+        <!-- Logo & Header Panel -->
+        <div class="p-4 border-b border-slate-800/80 bg-navy-950/50">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 p-2.5 rounded-xl flex items-center justify-center shadow-md font-bold">
+                    <i class="fa-solid fa-link text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base text-amber-400 leading-tight tracking-wide">All In One Link Report</h1>
+                    <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-semibold px-2 py-0.5 rounded mt-1 inline-block">
+                        MDS 311 Banjarmasin
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- MAIN CONTAINER -->
-    <div class="flex-1 flex flex-col md:flex-row min-h-screen">
-
-        <!-- SIDEBAR LAYOUT -->
-        <aside class="w-full md:w-72 bg-slate-900 text-slate-100 flex-shrink-0 flex flex-col justify-between shadow-xl z-20">
-            <div>
-                <!-- BRANDING / HEADER SIDEBAR -->
-                <div class="p-6 border-b border-slate-800">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-                            <i class="fa-solid fa-link text-xl"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-lg font-bold tracking-tight text-white leading-tight">All In One Link Report</h1>
-                            <span class="inline-block px-2 py-0.5 mt-1 text-[11px] font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-md">
-                                MDS 311 Banjarmasin
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- REAL TIME CLOCK -->
-                    <div class="mt-5 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
-                        <div class="flex items-center space-x-2 text-slate-400 text-xs font-medium mb-1">
-                            <i class="fa-regular fa-clock text-blue-400"></i>
-                            <span id="realtimeDate">Memuat tanggal...</span>
-                        </div>
-                        <div class="text-xl font-bold text-white tracking-wider font-mono" id="realtimeClock">
-                            00:00:00
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ACTION BUTTON IN SIDEBAR -->
-                <div class="p-4 border-b border-slate-800">
-                    <button onclick="openModal()" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center space-x-2 transition-all">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Tambah Report</span>
-                    </button>
-                </div>
-
-                <!-- NAVIGATION TABS -->
-                <div class="p-4">
-                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Navigasi Tampilan</p>
-                    <nav class="space-y-1">
-                        <button onclick="switchTab('dashboard')" id="tabDashboard" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors bg-blue-600 text-white">
-                            <span class="flex items-center"><i class="fa-solid fa-chart-pie w-6 text-left"></i> Dashboard</span>
-                            <span id="countDashboardBadge" class="px-2 py-0.5 text-xs rounded-full bg-white/20">0</span>
-                        </button>
-                        <button onclick="switchTab('all')" id="tabAll" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
-                            <span class="flex items-center"><i class="fa-solid fa-list-check w-6 text-left"></i> Semua Report</span>
-                            <span id="countAllBadge" class="px-2 py-0.5 text-xs rounded-full bg-slate-700">0</span>
-                        </button>
-                        <button onclick="switchTab('active')" id="tabActive" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
-                            <span class="flex items-center"><i class="fa-solid fa-spinner w-6 text-left"></i> Belum Selesai</span>
-                            <span id="countActiveBadge" class="px-2 py-0.5 text-xs rounded-full bg-slate-700">0</span>
-                        </button>
-                        <button onclick="switchTab('completed')" id="tabCompleted" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
-                            <span class="flex items-center"><i class="fa-solid fa-circle-check w-6 text-left"></i> Selesai</span>
-                            <span id="countCompletedBadge" class="px-2 py-0.5 text-xs rounded-full bg-slate-700">0</span>
-                        </button>
-                        
-                        <div class="pt-2 border-t border-slate-800/80 my-2"></div>
-
-                        <!-- MENU READ ME -->
-                        <button onclick="switchTab('readme')" id="tabReadme" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
-                            <span class="flex items-center"><i class="fa-solid fa-book-bookmark w-6 text-left text-amber-400"></i> READ ME / Tutorial</span>
-                            <span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-500/20 text-amber-400 font-semibold border border-amber-500/30">Guide</span>
-                        </button>
-                    </nav>
-                </div>
+        <!-- Management Info -->
+        <div class="p-4 bg-navy-950/30 border-b border-slate-800/80 space-y-1.5 text-xs text-slate-300">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-user-tie text-amber-500 w-4"></i>
+                <span><strong class="font-medium text-slate-200">SM:</strong> Andri Pahreza Sumantri</span>
             </div>
-
-            <!-- STORE MANAGEMENT INFO -->
-            <div class="p-6 border-t border-slate-800 mt-auto">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Manajemen Toko</p>
-                <div class="space-y-3">
-                    <div class="flex items-start space-x-3">
-                        <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-300 mt-0.5">
-                            <i class="fa-solid fa-user-tie text-xs"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400 font-medium">Store Manager</p>
-                            <p class="text-sm font-semibold text-slate-200">Andri Pahreza Sumantri</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3">
-                        <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-300 mt-0.5">
-                            <i class="fa-solid fa-user-gear text-xs"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400 font-medium">Assistant Store Manager</p>
-                            <p class="text-sm font-semibold text-slate-200">Devin Gunawan</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-user-check text-amber-500 w-4"></i>
+                <span><strong class="font-medium text-slate-200">ASM:</strong> Devin Gunawan</span>
             </div>
-        </aside>
+        </div>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="flex-1 flex flex-col min-w-0 bg-slate-50">
+        <!-- Sidebar Action & Navigation -->
+        <div class="p-4 space-y-4 flex-1">
+            <button onclick="openModal()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition duration-200">
+                <i class="fa-solid fa-plus text-sm"></i>
+                <span>Tambah Report</span>
+            </button>
 
-            <!-- TOP NAVBAR -->
-            <header class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 z-10">
-                <div class="relative flex-1 max-w-lg">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari judul, kategori, catatan, atau link..." class="w-full pl-10 pr-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
-                </div>
-
-                <div class="flex items-center space-x-3">
-                    <button onclick="fetchData()" class="p-2.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl border border-slate-200 transition-colors" title="Refresh Data">
-                        <i class="fa-solid fa-rotate-right"></i>
-                    </button>
-                    <button onclick="openModal()" class="md:hidden py-2 px-4 bg-blue-600 text-white rounded-xl font-medium text-sm flex items-center space-x-2">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Tambah</span>
-                    </button>
-                </div>
-            </header>
-
-            <!-- CONTENT BODY -->
-            <div class="p-6 space-y-6 max-w-7xl w-full mx-auto">
-
-                <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                    <div>
-                        <h2 id="pageTitle" class="text-xl font-bold text-slate-800">Dashboard Panel</h2>
-                        <p id="pageSubtitle" class="text-xs text-slate-500 mt-0.5">Analisis data visual dan rekapan statistik report toko.</p>
+            <!-- Navigation Links (Grouping) -->
+            <nav class="space-y-1 text-xs">
+                <button onclick="switchTab('all')" id="nav-all" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30 font-semibold transition text-left">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-layer-group w-4"></i>
+                        <span>Semua Report</span>
                     </div>
-                </div>
-
-                <!-- DASHBOARD CONTAINER -->
-                <div id="dashboardView" class="space-y-6">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-medium">Total Report</span>
-                                <i class="fa-solid fa-folder-open text-blue-500"></i>
-                            </div>
-                            <span id="statTotal" class="text-2xl font-bold text-slate-800">0</span>
-                        </div>
-
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-medium">Belum Dikerjakan</span>
-                                <i class="fa-regular fa-clock text-slate-400"></i>
-                            </div>
-                            <span id="statBelum" class="text-2xl font-bold text-slate-600">0</span>
-                        </div>
-
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-medium">Sedang Proses</span>
-                                <i class="fa-solid fa-spinner text-amber-500"></i>
-                            </div>
-                            <span id="statSedang" class="text-2xl font-bold text-amber-600">0</span>
-                        </div>
-
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-medium">Deadline Hari Ini</span>
-                                <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
-                            </div>
-                            <span id="statToday" class="text-2xl font-bold text-rose-600">0</span>
-                        </div>
-
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-medium">Deadline ≤ 3 Hari</span>
-                                <i class="fa-solid fa-hourglass-half text-orange-500"></i>
-                            </div>
-                            <span id="statH3" class="text-2xl font-bold text-orange-600">0</span>
-                        </div>
-
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-medium">Selesai</span>
-                                <i class="fa-solid fa-circle-check text-emerald-500"></i>
-                            </div>
-                            <span id="statSelesai" class="text-2xl font-bold text-emerald-600">0</span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                <i class="fa-solid fa-chart-pie text-blue-600"></i> Break Down Status Report
-                            </h3>
-                            <div class="relative h-64 w-full flex justify-center items-center">
-                                <canvas id="statusChart"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                <i class="fa-solid fa-chart-column text-indigo-600"></i> Sebaran Kategori Report
-                            </h3>
-                            <div class="relative h-64 w-full flex justify-center items-center">
-                                <canvas id="categoryChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TABLE SECTION CONTAINER -->
-                <div id="tableView" class="space-y-4 hidden">
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                        <div class="flex flex-wrap items-center gap-2 flex-1">
-                            <select id="filterStatus" onchange="applyFilters()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Semua Status</option>
-                                <option value="Belum Dikerjakan">Belum Dikerjakan</option>
-                                <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
-                                <option value="Selesai">Selesai</option>
-                            </select>
-
-                            <select id="filterPriority" onchange="applyFilters()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Semua Prioritas</option>
-                                <option value="Tinggi">Prioritas Tinggi</option>
-                                <option value="Sedang">Prioritas Sedang</option>
-                                <option value="Rendah">Prioritas Rendah</option>
-                            </select>
-
-                            <select id="filterCategory" onchange="applyFilters()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Semua Kategori</option>
-                                <option value="Finance">Finance</option>
-                                <option value="HR">HR</option>
-                                <option value="Operasional">Operasional</option>
-                                <option value="Audit">Audit</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Produksi">Produksi</option>
-                                <option value="Lainnya">Lainnya</option>
-                            </select>
-
-                            <select id="filterSource" onchange="applyFilters()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Semua Sumber</option>
-                                <option value="WhatsApp">WhatsApp</option>
-                                <option value="Email">Email</option>
-                                <option value="Teams">Teams</option>
-                                <option value="Telegram">Telegram</option>
-                                <option value="SharePoint">SharePoint</option>
-                                <option value="Manual">Manual</option>
-                            </select>
-                        </div>
-
-                        <div class="flex items-center space-x-2">
-                            <select id="sortBy" onchange="applyFilters()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="deadline">Deadline Terdekat</option>
-                                <option value="deadline_desc">Deadline Terlama</option>
-                                <option value="newest">Terbaru</option>
-                                <option value="oldest">Terlama</option>
-                            </select>
-
-                            <button onclick="resetFilters()" class="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
-                                Reset Filter
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse min-w-[800px]">
-                                <thead>
-                                    <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        <th class="py-3.5 px-4 w-12 text-center">Status</th>
-                                        <th class="py-3.5 px-4">Judul Report</th>
-                                        <th class="py-3.5 px-4">Deadline</th>
-                                        <th class="py-3.5 px-4">Status</th>
-                                        <th class="py-3.5 px-4">Prioritas</th>
-                                        <th class="py-3.5 px-4">Kategori / Sumber</th>
-                                        <th class="py-3.5 px-4 text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="reportTableBody" class="divide-y divide-slate-200 text-sm">
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div id="emptyState" class="hidden p-12 text-center">
-                            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                                <i class="fa-regular fa-folder-open"></i>
-                            </div>
-                            <h3 class="text-base font-semibold text-slate-800">Belum Ada Report</h3>
-                            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Tidak ada laporan yang tersimpan atau cocok dengan kriteria tampilan Anda saat ini.</p>
-                            <button onclick="openModal()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-500 transition-colors">
-                                + Tambah Report Baru
-                            </button>
-                        </div>
-
-                        <div id="loadingState" class="p-12 text-center">
-                            <div class="inline-block animate-spin text-blue-600 text-3xl mb-3">
-                                <i class="fa-solid fa-circle-notch"></i>
-                            </div>
-                            <p class="text-xs font-medium text-slate-500">Memuat data dari Google Spreadsheet...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- READ ME CONTAINER -->
-                <div id="readmeView" class="space-y-6 hidden">
-                    <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-8">
-                        <div class="bg-gradient-to-r from-slate-900 to-blue-900 text-white p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                            <div>
-                                <h3 class="text-lg font-bold flex items-center gap-2">
-                                    <i class="fa-solid fa-circle-info text-blue-400"></i> Panduan Penggunaan All In One Link Report
-                                </h3>
-                                <p class="text-xs text-slate-300 mt-1">Sistem Manajemen Report Terpusat untuk Unit MDS 311 Banjarmasin.</p>
-                            </div>
-                            <span class="px-3 py-1 bg-white/10 border border-white/20 rounded-lg text-xs font-medium text-blue-200">
-                                MDS 311 Banjarmasin
-                            </span>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="border border-slate-200 p-5 rounded-xl bg-slate-50/50 hover:border-blue-300 transition-colors">
-                                <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg mb-3">
-                                    <i class="fa-solid fa-circle-check"></i>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-sm">1. Centang Cepat (1-Click Finish)</h4>
-                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                    Selesaikan report tanpa membuka form edit! Cukup klik **lingkaran centang** di sebelah kiri judul report pada tabel. Status akan berubah seketika menjadi **✓ Selesai**, judul dicoret, dan tersinkron langsung ke Spreadsheet.
-                                </p>
-                            </div>
-
-                            <div class="border border-slate-200 p-5 rounded-xl bg-slate-50/50 hover:border-blue-300 transition-colors">
-                                <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg mb-3">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-sm">2. Pencarian Instan (<10 Detik)</h4>
-                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                    Temukan link report yang tersebar di WA, Email, atau Teams dalam hitungan detik. Gunakan kolom pencarian di navbar atas atau saring berdasarkan kategori (Finance, Operasional, HR, dll.) serta asal sumber link.
-                                </p>
-                            </div>
-
-                            <div class="border border-slate-200 p-5 rounded-xl bg-slate-50/50 hover:border-blue-300 transition-colors">
-                                <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-lg mb-3">
-                                    <i class="fa-solid fa-chart-pie"></i>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-sm">3. Dashboard Statistik Visual</h4>
-                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                    Menu **Dashboard** menyajikan ringkasan statistik angka dan grafik *doughnut/bar chart* interaktif tanpa menampilkan tabel data, memudahkan jajaran manajemen memantau progres pekerjaan toko secara cepat.
-                                </p>
-                            </div>
-
-                            <div class="border border-slate-200 p-5 rounded-xl bg-slate-50/50 hover:border-blue-300 transition-colors">
-                                <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg mb-3">
-                                    <i class="fa-solid fa-database"></i>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-sm">4. Integrasi Google Spreadsheet</h4>
-                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                    Seluruh data tersimpan secara terpusat di Google Spreadsheet. Setiap penambahan, pembaruan status, atau penghapusan akan langsung diperbarui secara real-time.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-slate-200 pt-6">
-                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Informasi Unit & Manajemen Toko</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center space-x-3">
-                                    <div class="w-10 h-10 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold">
-                                        <i class="fa-solid fa-user-tie"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-slate-500 font-medium">Store Manager</p>
-                                        <p class="text-sm font-bold text-slate-800">Andri Pahreza Sumantri</p>
-                                    </div>
-                                </div>
-
-                                <div class="p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center space-x-3">
-                                    <div class="w-10 h-10 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold">
-                                        <i class="fa-solid fa-user-gear"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-slate-500 font-medium">Assistant Store Manager</p>
-                                        <p class="text-sm font-bold text-slate-800">Devin Gunawan</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- FOOTER SIGNATURE -->
-            <footer class="p-6 text-center border-t border-slate-200 bg-white mt-auto">
-                <p class="text-xs text-slate-500">
-                    All In One Link Report &copy; 2026 | Built with Precision by <span class="font-semibold text-slate-700">Andri Pahreza S.</span> (APS Design System)
-                </p>
-            </footer>
-
-        </main>
-    </div>
-
-    <!-- MODAL ADD/EDIT REPORT -->
-    <div id="reportModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-                <h3 id="modalTitle" class="text-base font-bold text-slate-800">Tambah Report Baru</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                    <span id="badge-nav-all" class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">0</span>
                 </button>
+                <button onclick="switchTab('pending')" id="nav-pending" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition text-left">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-regular fa-clock w-4"></i>
+                        <span>Belum Selesai</span>
+                    </div>
+                    <span id="badge-nav-pending" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-bold">0</span>
+                </button>
+                <button onclick="switchTab('completed')" id="nav-completed" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition text-left">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-regular fa-circle-check w-4"></i>
+                        <span>Sudah Selesai</span>
+                    </div>
+                    <span id="badge-nav-completed" class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold">0</span>
+                </button>
+                <button onclick="fetchReportsFromAPI()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition text-left mt-2 border-t border-slate-800/60">
+                    <i class="fa-solid fa-rotate-right w-4" id="refreshIcon"></i>
+                    <span>Refresh Data</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Sidebar Footer Signature -->
+        <div class="p-4 border-t border-slate-800 text-[11px] text-slate-500 text-center">
+            All In One Link Report &copy; 2026<br>
+            <span class="text-[10px] text-amber-500/70">APS Design System</span>
+        </div>
+    </aside>
+
+    <!-- HEADER TOP BAR (UNTUK TAMPILAN HP - MIDNIGHT NAVY & GOLD) -->
+    <header class="md:hidden bg-navy-900 border-b border-slate-800 text-slate-200 sticky top-0 z-30 shadow-md p-4">
+        <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+                <div class="bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 p-2 rounded-lg flex items-center justify-center shadow-sm font-bold">
+                    <i class="fa-solid fa-link text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-sm text-amber-400 leading-none">All In One Link Report</h1>
+                    <span class="text-[10px] text-slate-300 font-semibold">MDS 311 Banjarmasin</span>
+                </div>
+            </div>
+            <button onclick="fetchReportsFromAPI()" class="p-2 text-slate-400 hover:text-amber-400 rounded-lg">
+                <i class="fa-solid fa-rotate-right text-sm"></i>
+            </button>
+        </div>
+        <div class="mt-2 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+            <span><strong>SM:</strong> Andri Pahreza S.</span>
+            <span><strong>ASM:</strong> Devin Gunawan</span>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 md:ml-64 flex flex-col min-h-screen">
+
+        <!-- Top Clock Bar -->
+        <div class="bg-white border-b border-slate-200 px-4 sm:px-6 py-2.5 flex items-center justify-between text-xs text-slate-500 shadow-2xs">
+            <div class="flex items-center gap-2">
+                <i class="fa-regular fa-clock text-amber-600"></i>
+                <span id="realtimeClock" class="font-medium text-slate-700">Memuat waktu...</span>
+            </div>
+            <div class="hidden sm:block text-[11px] text-slate-400">
+                Sistem Manajemen Laporan Terpusat
+            </div>
+        </div>
+
+        <!-- MAIN CONTAINER -->
+        <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 space-y-6">
+            
+            <!-- SUMMARY CARDS -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
+                    <div class="p-2.5 bg-slate-100 text-slate-700 rounded-lg"><i class="fa-solid fa-layer-group text-base"></i></div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">Total Report</p>
+                        <p id="statTotal" class="text-lg font-bold text-slate-800">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
+                    <div class="p-2.5 bg-slate-100 text-slate-700 rounded-lg"><i class="fa-regular fa-clock text-base"></i></div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">Belum Dikerjakan</p>
+                        <p id="statBelum" class="text-lg font-bold text-slate-800">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
+                    <div class="p-2.5 bg-blue-50 text-blue-600 rounded-lg"><i class="fa-solid fa-spinner text-base"></i></div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">Sedang Proses</p>
+                        <p id="statSedang" class="text-lg font-bold text-blue-600">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
+                    <div class="p-2.5 bg-rose-50 text-rose-600 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-base"></i></div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">Hari Ini / Lewat</p>
+                        <p id="statHariIni" class="text-lg font-bold text-rose-600">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
+                    <div class="p-2.5 bg-amber-50 text-amber-700 rounded-lg"><i class="fa-regular fa-calendar-days text-base"></i></div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">H-3 Deadline</p>
+                        <p id="statH3" class="text-lg font-bold text-amber-700">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex items-center gap-3">
+                    <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg"><i class="fa-regular fa-circle-check text-base"></i></div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">Selesai</p>
+                        <p id="statSelesai" class="text-lg font-bold text-emerald-600">0</p>
+                    </div>
+                </div>
             </div>
 
-            <form id="reportForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4 overflow-y-auto flex-1">
-                <input type="hidden" id="formId">
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Judul Report <span class="text-rose-500">*</span></label>
-                    <input type="text" id="formTitle" required placeholder="Contoh: Laporan Sales Operasional" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <!-- TOOLBAR (SEARCH, FILTER & SORT) -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3">
+                <div class="relative w-full">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="searchInput" oninput="renderApp()" placeholder="Cari judul, kategori, atau catatan..." 
+                        class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:border-amber-500 focus:outline-none transition">
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">URL / Link Report <span class="text-rose-500">*</span></label>
-                    <input type="url" id="formUrl" required placeholder="https://..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Deadline <span class="text-rose-500">*</span></label>
-                        <input type="date" id="formDeadline" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Status</label>
-                        <select id="formStatus" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Status</label>
+                        <select id="filterStatus" onchange="renderApp()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                            <option value="">Semua Status</option>
                             <option value="Belum Dikerjakan">Belum Dikerjakan</option>
                             <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
                             <option value="Selesai">Selesai</option>
+                            <option value="Terlambat">Terlambat</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Prioritas</label>
-                        <select id="formPriority" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Prioritas</label>
+                        <select id="filterPriority" onchange="renderApp()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                            <option value="">Semua Prioritas</option>
                             <option value="Tinggi">Tinggi</option>
-                            <option value="Sedang" selected>Sedang</option>
+                            <option value="Sedang">Sedang</option>
                             <option value="Rendah">Rendah</option>
                         </select>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori</label>
-                        <select id="formCategory" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Kategori</label>
+                        <select id="filterCategory" onchange="renderApp()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                            <option value="">Semua Kategori</option>
+                            <option value="Finance">Finance</option>
+                            <option value="HR">HR</option>
+                            <option value="Operasional">Operasional</option>
+                            <option value="Audit">Audit</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Produksi">Produksi</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Sumber</label>
+                        <select id="filterSource" onchange="renderApp()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                            <option value="">Semua Sumber</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                            <option value="Email">Email</option>
+                            <option value="Teams">Teams</option>
+                            <option value="Telegram">Telegram</option>
+                            <option value="SharePoint">SharePoint</option>
+                            <option value="Manual">Manual</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Urutkan</label>
+                        <select id="sortBy" onchange="renderApp()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-amber-500">
+                            <option value="deadlineAsc">Deadline Terdekat</option>
+                            <option value="deadlineDesc">Deadline Terlama</option>
+                            <option value="newest">Terbaru</option>
+                            <option value="oldest">Terlama</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="resetFilters()" class="w-full text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 font-medium py-2 rounded-lg transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-rotate-left"></i> Reset Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLE DESKTOP / CARD MOBILE VIEW -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden relative">
+                <!-- Loading Overlay -->
+                <div id="loadingOverlay" class="absolute inset-0 bg-white/80 backdrop-blur-xs z-20 flex flex-col items-center justify-center gap-2">
+                    <div class="w-8 h-8 border-4 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs font-medium text-slate-600">Memuat data dari Spreadsheet...</p>
+                </div>
+
+                <!-- Desktop Table -->
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-300 text-xs font-semibold uppercase tracking-wider">
+                                <th class="py-3.5 px-4 w-12 text-center">Done</th>
+                                <th class="py-3.5 px-4">Judul Report</th>
+                                <th class="py-3.5 px-4">Deadline & Sisa</th>
+                                <th class="py-3.5 px-4">Status</th>
+                                <th class="py-3.5 px-4">Prioritas</th>
+                                <th class="py-3.5 px-4">Kategori</th>
+                                <th class="py-3.5 px-4">Sumber</th>
+                                <th class="py-3.5 px-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-slate-200 text-sm">
+                            <!-- Data injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile View (Card Layout) -->
+                <div id="mobileCards" class="md:hidden divide-y divide-slate-200">
+                    <!-- Data injected by JS -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden py-12 text-center">
+                    <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fa-solid fa-inbox text-2xl"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-slate-700">Belum ada report yang tersimpan</h3>
+                    <p class="text-xs text-slate-500 mt-1 mb-4">Tambahkan link report pertama Anda untuk mulai mengelola.</p>
+                    <button onclick="openModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium px-4 py-2 rounded-lg inline-flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-solid fa-plus"></i> Tambah Report
+                    </button>
+                </div>
+
+                <!-- PAGINATION CONTROLS (5 ITEM PER HALAMAN) -->
+                <div id="paginationBar" class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+                    <span id="pageInfo">Menampilkan 0-0 dari 0 report</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="changePage(-1)" id="btnPrevPage" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium">
+                            <i class="fa-solid fa-chevron-left text-[10px] mr-1"></i> Prev
+                        </button>
+                        <span id="pageNumberDisplay" class="font-semibold text-slate-800 px-2">1 / 1</span>
+                        <button onclick="changePage(1)" id="btnNextPage" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium">
+                            Next <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER SIGNATURE -->
+        <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
+                All In One Link Report &copy; 2026 | Built with Precision by Andri Pahreza S. (APS Design System)
+            </div>
+        </footer>
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR (UNTUK TAMPILAN HP - MIDNIGHT NAVY & GOLD) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-navy-900 border-t border-slate-800 flex items-center justify-around py-2 z-40 shadow-lg">
+        <button onclick="switchTab('all')" id="bottom-nav-all" class="flex flex-col items-center gap-1 text-amber-400 text-[10px] font-medium">
+            <i class="fa-solid fa-layer-group text-base"></i>
+            <span>Semua</span>
+        </button>
+        <button onclick="switchTab('pending')" id="bottom-nav-pending" class="flex flex-col items-center gap-1 text-slate-400 hover:text-amber-400 text-[10px] font-medium">
+            <i class="fa-regular fa-clock text-base"></i>
+            <span>Belum</span>
+        </button>
+        <button onclick="openModal()" class="flex flex-col items-center gap-1 text-slate-950 bg-gradient-to-r from-amber-500 to-amber-600 p-2.5 rounded-full shadow-md -mt-5 font-bold">
+            <i class="fa-solid fa-plus text-base"></i>
+        </button>
+        <button onclick="switchTab('completed')" id="bottom-nav-completed" class="flex flex-col items-center gap-1 text-slate-400 hover:text-amber-400 text-[10px] font-medium">
+            <i class="fa-regular fa-circle-check text-base"></i>
+            <span>Selesai</span>
+        </button>
+        <button onclick="fetchReportsFromAPI()" class="flex flex-col items-center gap-1 text-slate-400 hover:text-amber-400 text-[10px] font-medium">
+            <i class="fa-solid fa-rotate-right text-base"></i>
+            <span>Refresh</span>
+        </button>
+    </div>
+
+    <!-- MODAL FORM (TAMBAH / EDIT) -->
+    <div id="reportModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-navy-900 text-white">
+                <h3 id="modalTitle" class="font-bold text-amber-400 text-sm">Tambah Report Baru</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <form id="reportForm" onsubmit="saveReport(event)" class="p-6 space-y-4">
+                <input type="hidden" id="reportId">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Judul Report <span class="text-rose-500">*</span></label>
+                    <input type="text" id="formTitle" required placeholder="Contoh: Laporan Keuangan Bulanan" class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">URL / Link Report <span class="text-rose-500">*</span></label>
+                    <input type="url" id="formUrl" required placeholder="https://docs.google.com/..." class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Deadline <span class="text-rose-500">*</span></label>
+                        <input type="date" id="formDeadline" required class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 outline-none cursor-pointer bg-white">
+                        <p class="text-[10px] text-slate-400 mt-1">*Pilih dari kalender</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Status</label>
+                        <select id="formStatus" class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 outline-none">
+                            <option value="Belum Dikerjakan">Belum Dikerjakan</option>
+                            <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
+                            <option value="Selesai">Selesai</option>
+                            <option value="Terlambat">Terlambat</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Prioritas</label>
+                        <select id="formPriority" class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 outline-none">
+                            <option value="Sedang">Sedang</option>
+                            <option value="Tinggi">Tinggi</option>
+                            <option value="Rendah">Rendah</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Kategori</label>
+                        <select id="formCategory" class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 outline-none">
                             <option value="Operasional">Operasional</option>
                             <option value="Finance">Finance</option>
                             <option value="HR">HR</option>
@@ -492,10 +414,9 @@
                             <option value="Lainnya">Lainnya</option>
                         </select>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Sumber Link</label>
-                        <select id="formSource" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Sumber</label>
+                        <select id="formSource" class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 outline-none">
                             <option value="WhatsApp">WhatsApp</option>
                             <option value="Email">Email</option>
                             <option value="Teams">Teams</option>
@@ -505,593 +426,564 @@
                         </select>
                     </div>
                 </div>
-
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Catatan Tambahan</label>
-                    <textarea id="formNotes" rows="2" placeholder="Instruksi singkat atau keterangan report..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Catatan Tambahan</label>
+                    <textarea id="formNotes" rows="2" placeholder="Catatan atau instruksi terkait report..." class="w-full text-sm border border-slate-300 rounded-lg p-2.5 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 outline-none"></textarea>
                 </div>
-
-                <div class="pt-4 border-t border-slate-200 flex items-center justify-end space-x-3">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-xl text-xs font-semibold hover:bg-slate-50 transition-colors">Batal</button>
-                    <button type="submit" id="btnSubmitForm" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-500 transition-colors shadow-sm">Simpan Report</button>
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition">Batal</button>
+                    <button type="submit" id="submitBtn" class="px-4 py-2 text-xs font-bold text-slate-950 bg-amber-500 hover:bg-amber-600 rounded-lg shadow-xs transition">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 z-50 transform translate-y-20 opacity-0 transition-all duration-300">
-        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
-        <span id="toastMessage" class="text-xs font-medium">Notifikasi</span>
+    <!-- CONFIRMATION DELETE MODAL -->
+    <div id="deleteModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-sm p-6 text-center">
+            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+            </div>
+            <h3 class="font-bold text-slate-800 text-base mb-1">Hapus Report?</h3>
+            <p class="text-xs text-slate-500 mb-6">Data yang dihapus tidak dapat dikembalikan lagi secara permanen.</p>
+            <div class="flex gap-2">
+                <button onclick="closeDeleteModal()" class="w-1/2 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition">Batal</button>
+                <button id="confirmDeleteBtn" class="w-1/2 py-2 text-xs font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition">Hapus</button>
+            </div>
+        </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-16 md:bottom-5 right-5 bg-navy-900 border border-slate-700 text-white text-xs px-4 py-3 rounded-lg shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i class="fa-solid fa-circle-info text-amber-400" id="toastIcon"></i>
+        <span id="toastMsg">Pesan Notifikasi</span>
+    </div>
+
+    <!-- LOGIKA JAVASCRIPT LENGKAP -->
     <script>
+        // GOOGLE APPS SCRIPT WEB APP API URL
         const API_URL = "https://script.google.com/macros/s/AKfycbzVD4Zio_qPEYiO2hpPeycChqv00a9OwUHJui5y_X5knwscT2C12BnE4fu9MzKFtAnB/exec";
 
-        let reportsData = [];
-        let currentTab = 'dashboard';
-        let statusChartObj = null;
-        let categoryChartObj = null;
+        let reports = [];
+        let deleteTargetId = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initClock();
-            fetchData();
-        });
+        // STATE NAVIGASI TAB & PAGINATION
+        let currentTab = 'all'; // 'all' | 'pending' | 'completed'
+        let currentPage = 1;
+        const ITEMS_PER_PAGE = 5;
 
-        function initClock() {
-            function updateClock() {
-                const now = new Date();
-                const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                document.getElementById('realtimeDate').innerText = now.toLocaleDateString('id-ID', optionsDate);
+        // 1. REALTIME LOCAL TIME (HARI, TANGGAL, JAM & ZONA WAKTU LOKAL)
+        function updateRealtimeClock() {
+            const clockEl = document.getElementById('realtimeClock');
+            if (!clockEl) return;
 
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-                
-                const tzMatch = now.toTimeString().match(/([A-Z]{3,4})/);
-                const tzName = tzMatch ? tzMatch[1] : '';
-
-                document.getElementById('realtimeClock').innerText = `${hours}:${minutes}:${seconds} ${tzName}`;
-            }
-            updateClock();
-            setInterval(updateClock, 1000);
-        }
-
-        function formatTanggalIndo(dateStr) {
-            if (!dateStr) return '-';
-            const d = new Date(dateStr);
-            if (isNaN(d.getTime())) return dateStr;
+            const now = new Date();
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('id-ID', optionsDate);
             
-            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            return d.toLocaleDateString('id-ID', options);
-        }
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
 
-        async function fetchData() {
-            showFullScreenLoader(true, "Sinkronisasi data Google Spreadsheet...");
+            const timeZoneOffset = -now.getTimezoneOffset() / 60;
+            let timeZoneName = "WITA";
+            if (timeZoneOffset === 7) timeZoneName = "WIB";
+            else if (timeZoneOffset === 8) timeZoneName = "WITA";
+            else if (timeZoneOffset === 9) timeZoneName = "WIT";
+
+            clockEl.innerText = `${dateStr}, ${hours}:${minutes}:${seconds} ${timeZoneName}`;
+        }
+        setInterval(updateRealtimeClock, 1000);
+        updateRealtimeClock();
+
+        // 2. FETCH DATA DARI SPREADSHEET
+        async function fetchReportsFromAPI() {
             showLoading(true);
             try {
-                const res = await fetch(API_URL);
-                const json = await res.json();
-                if(json.status === 'success') {
-                    reportsData = json.data || [];
-                    updateStats();
-                    renderCharts();
-                    applyFilters();
+                const response = await fetch(API_URL);
+                const result = await response.json();
+                
+                if (result.status === "success" && Array.isArray(result.data)) {
+                    reports = result.data.map(item => ({
+                        id: String(item.ID || ''),
+                        title: item.Title || '',
+                        url: item.URL || '',
+                        deadline: formatDateForInput(item.Deadline),
+                        status: item.Status || 'Belum Dikerjakan',
+                        priority: item.Priority || 'Sedang',
+                        category: item.Category || 'Lainnya',
+                        source: item.Source || 'Manual',
+                        notes: item.Notes || '',
+                        archived: Boolean(item.Archived === true || item.Archived === "TRUE" || item.Archived === "true"),
+                        createdAt: item['Created At'] || new Date().toISOString()
+                    }));
+                    renderApp();
+                    showToast("Data berhasil diperbarui dari Spreadsheet");
                 } else {
-                    showToast('Gagal memuat data dari Spreadsheet', 'error');
+                    showToast("Gagal mengambil data dari Spreadsheet");
                 }
-            } catch (err) {
-                console.error(err);
-                showToast('Koneksi ke backend gagal', 'error');
+            } catch (error) {
+                console.error("Error Fetching Data:", error);
+                showToast("Terjadi kesalahan koneksi ke Web App");
             } finally {
                 showLoading(false);
-                // Memberi delay halus 400ms agar animasi transisi terasa mulus
-                setTimeout(() => {
-                    showFullScreenLoader(false);
-                }, 400);
             }
         }
 
-        function getItemStatus(item) {
-            return item.status || item.Status || 'Belum Dikerjakan';
+        // 3. POST DATA KE SPREADSHEET (CREATE, UPDATE, ARCHIVE, DELETE)
+        async function postToAPI(payload) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Error Post Data:", error);
+                showToast("Gagal menghubungkan ke backend Apps Script");
+                return { status: "error" };
+            }
         }
 
-        function getItemID(item) {
-            return item.id || item.ID || '';
-        }
+        // 4. SWITCH TAB NAVIGASI SIDEBAR & BOTTOM BAR (ROYAL MIDNIGHT NAVY & GOLD)
+        function switchTab(tabName) {
+            currentTab = tabName;
+            currentPage = 1;
 
-        function updateStats() {
-            let total = reportsData.length;
-            let belum = 0;
-            let sedang = 0;
-            let todayCount = 0;
-            let h3Count = 0;
-            let selesaiCount = 0;
-
-            reportsData.forEach(item => {
-                const st = getItemStatus(item);
-                if(st === 'Selesai') {
-                    selesaiCount++;
+            ['all', 'pending', 'completed'].forEach(t => {
+                const navEl = document.getElementById(`nav-${t}`);
+                const bottomNavEl = document.getElementById(`bottom-nav-${t}`);
+                
+                if (t === tabName) {
+                    if (navEl) navEl.className = "w-full flex items-center justify-between px-3 py-2.5 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30 font-semibold transition text-left";
+                    if (bottomNavEl) bottomNavEl.className = "flex flex-col items-center gap-1 text-amber-400 text-[10px] font-medium";
                 } else {
-                    if(st === 'Belum Dikerjakan') belum++;
-                    if(st === 'Sedang Dikerjakan') sedang++;
-
-                    const deadlineVal = item.deadline || item.Deadline;
-                    if(deadlineVal) {
-                        const diffDays = getDaysDiff(deadlineVal);
-                        if(diffDays <= 0) todayCount++;
-                        if(diffDays >= 0 && diffDays <= 3) h3Count++;
-                    }
+                    if (navEl) navEl.className = "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition text-left";
+                    if (bottomNavEl) bottomNavEl.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-amber-400 text-[10px] font-medium";
                 }
             });
 
-            document.getElementById('statTotal').innerText = total;
-            document.getElementById('statBelum').innerText = belum;
-            document.getElementById('statSedang').innerText = sedang;
-            document.getElementById('statToday').innerText = todayCount;
-            document.getElementById('statH3').innerText = h3Count;
-            document.getElementById('statSelesai').innerText = selesaiCount;
-
-            document.getElementById('countDashboardBadge').innerText = total;
-            document.getElementById('countAllBadge').innerText = total;
-            document.getElementById('countActiveBadge').innerText = (belum + sedang);
-            document.getElementById('countCompletedBadge').innerText = selesaiCount;
+            renderApp();
         }
 
-        function renderCharts() {
-            let statusCounts = { 'Belum Dikerjakan': 0, 'Sedang Dikerjakan': 0, 'Selesai': 0 };
-            let catCounts = {};
+        // 5. TICK MARK (CENTANG CEPAT STATUS SELESAI)
+        async function toggleQuickStatus(id) {
+            const item = reports.find(r => r.id === id);
+            if (!item) return;
 
-            reportsData.forEach(item => {
-                const st = getItemStatus(item);
-                if(statusCounts[st] !== undefined) statusCounts[st]++;
-                else statusCounts[st] = 1;
+            const nextStatus = item.status === "Selesai" ? "Belum Dikerjakan" : "Selesai";
+            item.status = nextStatus;
+            renderApp();
 
-                const cat = item.category || item.Category || 'Lainnya';
-                catCounts[cat] = (catCounts[cat] || 0) + 1;
-            });
+            showToast(nextStatus === "Selesai" ? "Report ditandai Selesai!" : "Status dikembalikan ke Belum Dikerjakan");
 
-            const ctxStatus = document.getElementById('statusChart').getContext('2d');
-            if(statusChartObj) statusChartObj.destroy();
-            statusChartObj = new Chart(ctxStatus, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(statusCounts),
-                    datasets: [{
-                        data: Object.values(statusCounts),
-                        backgroundColor: ['#64748b', '#f59e0b', '#10b981'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
-                }
-            });
-
-            const ctxCategory = document.getElementById('categoryChart').getContext('2d');
-            if(categoryChartObj) categoryChartObj.destroy();
-            categoryChartObj = new Chart(ctxCategory, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(catCounts),
-                    datasets: [{
-                        label: 'Jumlah Report',
-                        data: Object.values(catCounts),
-                        backgroundColor: '#3b82f6',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
-                }
-            });
+            const payload = {
+                action: "UPDATE",
+                id: item.id,
+                title: item.title,
+                url: item.url,
+                deadline: item.deadline,
+                status: nextStatus,
+                priority: item.priority,
+                category: item.category,
+                source: item.source,
+                notes: item.notes
+            };
+            await postToAPI(payload);
         }
 
-        function renderTable(data) {
-            const tbody = document.getElementById('reportTableBody');
+        // DATE HELPERS
+        function getFormattedDate(daysOffset = 0) {
+            const date = new Date();
+            date.setDate(date.getDate() + daysOffset);
+            return formatDateForInput(date);
+        }
+
+        function formatDateForInput(dateObjOrStr) {
+            if (!dateObjOrStr) return '';
+            const d = new Date(dateObjOrStr);
+            if (isNaN(d.getTime())) return String(dateObjOrStr);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function calculateDaysLeft(deadlineStr) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const deadline = new Date(deadlineStr);
+            deadline.setHours(0,0,0,0);
+            const diffTime = deadline - today;
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        // 6. RENDER UTAMA APP (FILTER + GROUPING + PAGINATION 5 ITEM)
+        function renderApp() {
+            const tableBody = document.getElementById('tableBody');
+            const mobileCards = document.getElementById('mobileCards');
             const emptyState = document.getElementById('emptyState');
-            tbody.innerHTML = '';
 
-            if(!data || data.length === 0) {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filterStatus = document.getElementById('filterStatus').value;
+            const filterPriority = document.getElementById('filterPriority').value;
+            const filterCategory = document.getElementById('filterCategory').value;
+            const filterSource = document.getElementById('filterSource').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            updateSummaryCards();
+
+            // Filter Utama Data Aktif
+            let activeReports = reports.filter(r => !r.archived);
+
+            // Filter berdasarkan Tab Grouping (Sidebar)
+            if (currentTab === 'pending') {
+                activeReports = activeReports.filter(r => r.status !== 'Selesai');
+            } else if (currentTab === 'completed') {
+                activeReports = activeReports.filter(r => r.status === 'Selesai');
+            }
+
+            // Filter berdasarkan Search & Dropdown Filter
+            let filtered = activeReports.filter(r => {
+                const matchSearch = r.title.toLowerCase().includes(search) || 
+                                    r.category.toLowerCase().includes(search) || 
+                                    r.notes.toLowerCase().includes(search);
+                const matchStatus = filterStatus ? r.status === filterStatus : true;
+                const matchPriority = filterPriority ? r.priority === filterPriority : true;
+                const matchCategory = filterCategory ? r.category === filterCategory : true;
+                const matchSource = filterSource ? r.source === filterSource : true;
+
+                return matchSearch && matchStatus && matchPriority && matchCategory && matchSource;
+            });
+
+            // Sorting
+            filtered.sort((a, b) => {
+                if (sortBy === 'deadlineAsc') return new Date(a.deadline) - new Date(b.deadline);
+                if (sortBy === 'deadlineDesc') return new Date(b.deadline) - new Date(a.deadline);
+                if (sortBy === 'newest') return new Date(b.createdAt) - new Date(a.createdAt);
+                if (sortBy === 'oldest') return new Date(a.createdAt) - new Date(b.createdAt);
+                return 0;
+            });
+
+            // LOGIKA PAGINATION (5 ITEM PER HALAMAN)
+            const totalItems = filtered.length;
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
+            const paginatedItems = filtered.slice(startIndex, endIndex);
+
+            // Update Tampilan Pagination Bar
+            document.getElementById('pageInfo').innerText = totalItems > 0 
+                ? `Menampilkan ${startIndex + 1}-${endIndex} dari ${totalItems} report` 
+                : `Menampilkan 0 report`;
+            document.getElementById('pageNumberDisplay').innerText = `${currentPage} / ${totalPages}`;
+            document.getElementById('btnPrevPage').disabled = (currentPage === 1);
+            document.getElementById('btnNextPage').disabled = (currentPage === totalPages || totalItems === 0);
+
+            tableBody.innerHTML = '';
+            mobileCards.innerHTML = '';
+
+            if (totalItems === 0) {
                 emptyState.classList.remove('hidden');
                 return;
             } else {
                 emptyState.classList.add('hidden');
             }
 
-            data.forEach(item => {
-                const st = getItemStatus(item);
-                const isCompleted = st === 'Selesai';
-                const deadlineVal = item.deadline || item.Deadline;
-                const daysDiff = getDaysDiff(deadlineVal);
-                
-                const formattedDateText = formatTanggalIndo(deadlineVal);
+            paginatedItems.forEach(item => {
+                const isCompleted = item.status === "Selesai";
+                const daysLeft = calculateDaysLeft(item.deadline);
+                const badgeDeadline = getDeadlineBadge(daysLeft);
+                const badgeStatus = getStatusBadge(item.status);
+                const badgePriority = getPriorityBadge(item.priority);
 
-                const rowBg = isCompleted ? 'bg-slate-50/60' : 'hover:bg-blue-50/30';
-
-                let deadlineBadgeClass = 'bg-emerald-100 text-emerald-700';
-                let deadlineText = `${formattedDateText} (${daysDiff} hr)`;
-                
-                if(isCompleted) {
-                    deadlineBadgeClass = 'bg-slate-100 text-slate-500';
-                    deadlineText = formattedDateText;
-                } else if(daysDiff <= 0) {
-                    deadlineBadgeClass = 'bg-rose-100 text-rose-700 font-bold animate-pulse';
-                    deadlineText = daysDiff === 0 ? `${formattedDateText} (Hari Ini!)` : `${formattedDateText} (Lewat ${Math.abs(daysDiff)} hr)`;
-                } else if(daysDiff <= 3) {
-                    deadlineBadgeClass = 'bg-amber-100 text-amber-700 font-semibold';
-                    deadlineText = `${formattedDateText} (H-${daysDiff})`;
-                }
-
-                const priorityVal = item.priority || item.Priority || 'Sedang';
-                let priorityClass = 'bg-slate-100 text-slate-600';
-                if(priorityVal === 'Tinggi') priorityClass = 'bg-rose-50 text-rose-600 border border-rose-200';
-                if(priorityVal === 'Sedang') priorityClass = 'bg-amber-50 text-amber-600 border border-amber-200';
-                if(priorityVal === 'Rendah') priorityClass = 'bg-emerald-50 text-emerald-600 border border-emerald-200';
-
-                const itemID = getItemID(item);
-                const titleVal = item.title || item.Title || '';
-                const urlVal = item.url || item.URL || '#';
-                const notesVal = item.notes || item.Notes || '';
-                const categoryVal = item.category || item.Category || '-';
-                const sourceVal = item.source || item.Source || '-';
-
+                // Table Desktop Row
                 const tr = document.createElement('tr');
-                tr.className = `${rowBg} transition-colors border-b border-slate-200/80`;
+                tr.className = `hover:bg-slate-50 transition ${isCompleted ? 'completed-row' : ''}`;
                 tr.innerHTML = `
                     <td class="py-3 px-4 text-center">
-                        <button onclick="toggleQuickStatus('${itemID}', '${st}')" class="text-lg transition-transform active:scale-95" title="Tandai Selesai">
-                            ${isCompleted 
-                                ? '<i class="fa-solid fa-circle-check text-emerald-500"></i>' 
-                                : '<i class="fa-regular fa-circle text-slate-300 hover:text-emerald-500"></i>'}
+                        <button onclick="toggleQuickStatus('${item.id}')" 
+                                title="${isCompleted ? 'Tandai Belum Selesai' : 'Tandai Selesai'}"
+                                class="w-6 h-6 rounded-full border transition-all inline-flex items-center justify-center focus:outline-none ${
+                                    isCompleted 
+                                    ? 'bg-emerald-500 border-emerald-500 text-white shadow-xs' 
+                                    : 'border-slate-300 text-transparent hover:border-emerald-500 hover:text-emerald-500'
+                                }">
+                            <i class="fa-solid fa-check text-xs"></i>
                         </button>
                     </td>
                     <td class="py-3 px-4">
-                        <div class="flex flex-col">
-                            <a href="${urlVal}" target="_blank" class="font-semibold ${isCompleted ? 'text-slate-400 strikethrough' : 'text-slate-800 hover:text-blue-600'} flex items-center gap-1.5">
-                                ${escapeHtml(titleVal)}
-                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
-                            </a>
-                            ${notesVal ? `<span class="text-xs text-slate-400 mt-0.5">${escapeHtml(notesVal)}</span>` : ''}
+                        <a href="${item.url}" target="_blank" class="font-medium hover:underline flex items-center gap-1 ${isCompleted ? 'completed-title' : 'text-slate-900'}">
+                            <span>${escapeHtml(item.title)}</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400"></i>
+                        </a>
+                        ${item.notes ? `<div class="text-xs text-slate-400 mt-0.5">${escapeHtml(item.notes)}</div>` : ''}
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="text-xs font-semibold text-slate-700">${item.deadline}</div>
+                        <div class="mt-0.5">${badgeDeadline}</div>
+                    </td>
+                    <td class="py-3 px-4">${badgeStatus}</td>
+                    <td class="py-3 px-4">${badgePriority}</td>
+                    <td class="py-3 px-4"><span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">${escapeHtml(item.category)}</span></td>
+                    <td class="py-3 px-4"><span class="text-xs text-slate-500">${escapeHtml(item.source)}</span></td>
+                    <td class="py-3 px-4 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <a href="${item.url}" target="_blank" title="Buka Link" class="p-1.5 text-slate-400 hover:text-amber-600 rounded"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            <button onclick="copyToClipboard('${item.url}')" title="Copy Link" class="p-1.5 text-slate-400 hover:text-amber-600 rounded"><i class="fa-regular fa-copy"></i></button>
+                            <button onclick="openModal('${item.id}')" title="Edit" class="p-1.5 text-slate-400 hover:text-amber-600 rounded"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="archiveReport('${item.id}')" title="Arsip" class="p-1.5 text-slate-400 hover:text-blue-600 rounded"><i class="fa-solid fa-box-archive"></i></button>
+                            <button onclick="confirmDelete('${item.id}')" title="Hapus" class="p-1.5 text-slate-400 hover:text-rose-600 rounded"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </td>
-                    <td class="py-3 px-4 whitespace-nowrap">
-                        <span class="inline-block px-2.5 py-1 rounded-md text-xs ${deadlineBadgeClass}">
-                            <i class="fa-regular fa-calendar mr-1"></i> ${deadlineText}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 whitespace-nowrap">
-                        <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium ${isCompleted ? 'bg-emerald-100 text-emerald-800' : (st === 'Sedang Dikerjakan' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700')}">
-                            ${isCompleted ? '✓ Selesai' : st}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 whitespace-nowrap">
-                        <span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold ${priorityClass}">
-                            ${priorityVal}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 whitespace-nowrap">
-                        <div class="text-xs text-slate-600 font-medium">${categoryVal}</div>
-                        <div class="text-[11px] text-slate-400">${sourceVal}</div>
-                    </td>
-                    <td class="py-3 px-4 text-center whitespace-nowrap space-x-1">
-                        <button onclick="copyToClipboard('${urlVal}')" class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded-lg" title="Salin Link">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
-                        <button onclick="editReport('${itemID}')" class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-slate-100 rounded-lg" title="Edit Report">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                        </button>
-                        <button onclick="deleteReport('${itemID}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded-lg" title="Hapus Permanen">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                    </td>
                 `;
-                tbody.appendChild(tr);
+                tableBody.appendChild(tr);
+
+                // Mobile Card Layout
+                const card = document.createElement('div');
+                card.className = `p-4 space-y-3 ${isCompleted ? 'completed-row' : ''}`;
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-start gap-2">
+                            <button onclick="toggleQuickStatus('${item.id}')" 
+                                    class="w-6 h-6 rounded-full border transition-all mt-0.5 inline-flex items-center justify-center focus:outline-none ${
+                                        isCompleted 
+                                        ? 'bg-emerald-500 border-emerald-500 text-white' 
+                                        : 'border-slate-300 text-transparent hover:border-emerald-500'
+                                    }">
+                                <i class="fa-solid fa-check text-xs"></i>
+                            </button>
+                            <div>
+                                <h4 class="font-semibold text-sm ${isCompleted ? 'completed-title' : 'text-slate-900'}">${escapeHtml(item.title)}</h4>
+                                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded inline-block mt-1">${escapeHtml(item.category)} • ${escapeHtml(item.source)}</span>
+                            </div>
+                        </div>
+                        ${badgeStatus}
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-slate-500">
+                        <div>Deadline: <span class="font-medium text-slate-800">${item.deadline}</span></div>
+                        ${badgeDeadline}
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                        <div>${badgePriority}</div>
+                        <div class="flex gap-2">
+                            <button onclick="copyToClipboard('${item.url}')" class="p-2 bg-slate-100 text-slate-600 rounded-lg"><i class="fa-regular fa-copy"></i></button>
+                            <button onclick="openModal('${item.id}')" class="p-2 bg-slate-100 text-slate-600 rounded-lg"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <a href="${item.url}" target="_blank" class="px-3 py-1.5 bg-amber-600 text-white text-xs font-medium rounded-lg flex items-center gap-1"><i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> Buka</a>
+                        </div>
+                    </div>
+                `;
+                mobileCards.appendChild(card);
             });
         }
 
-        async function toggleQuickStatus(id, currentStatus) {
-            const newStatus = currentStatus === 'Selesai' ? 'Belum Dikerjakan' : 'Selesai';
-            const item = reportsData.find(r => String(getItemID(r)) === String(id));
-            if(!item) return;
+        function changePage(direction) {
+            currentPage += direction;
+            renderApp();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-            if(item.status !== undefined) item.status = newStatus;
-            if(item.Status !== undefined) item.Status = newStatus;
+        // BADGE HELPERS
+        function getDeadlineBadge(daysLeft) {
+            if (daysLeft < 0) return `<span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">Terlambat (${Math.abs(daysLeft)} hr)</span>`;
+            if (daysLeft === 0) return `<span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">Hari Ini</span>`;
+            if (daysLeft <= 3) return `<span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">${daysLeft} Hari Lagi</span>`;
+            return `<span class="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">${daysLeft} Hari Lagi</span>`;
+        }
+
+        function getStatusBadge(status) {
+            if (status === 'Belum Dikerjakan') return `<span class="px-2 py-1 text-xs font-medium rounded-md bg-slate-100 text-slate-600">Belum Dikerjakan</span>`;
+            if (status === 'Sedang Dikerjakan') return `<span class="px-2 py-1 text-xs font-medium rounded-md bg-blue-100 text-blue-700">Sedang Dikerjakan</span>`;
+            if (status === 'Selesai') return `<span class="px-2 py-1 text-xs font-medium rounded-md bg-emerald-100 text-emerald-700">✓ Selesai</span>`;
+            return `<span class="px-2 py-1 text-xs font-medium rounded-md bg-rose-100 text-rose-700">Terlambat</span>`;
+        }
+
+        function getPriorityBadge(priority) {
+            if (priority === 'Tinggi') return `<span class="text-xs font-semibold text-rose-600 flex items-center gap-1"><i class="fa-solid fa-flag"></i> Tinggi</span>`;
+            if (priority === 'Sedang') return `<span class="text-xs font-medium text-amber-600 flex items-center gap-1"><i class="fa-solid fa-flag"></i> Sedang</span>`;
+            return `<span class="text-xs font-normal text-emerald-600 flex items-center gap-1"><i class="fa-solid fa-flag"></i> Rendah</span>`;
+        }
+
+        // STATS CARDS & BADGES SIDEBAR
+        function updateSummaryCards() {
+            const active = reports.filter(r => !r.archived);
+            const pendingCount = active.filter(r => r.status !== 'Selesai').length;
+            const completedCount = active.filter(r => r.status === 'Selesai').length;
+
+            // Summary Cards Atas
+            document.getElementById('statTotal').innerText = active.length;
+            document.getElementById('statBelum').innerText = active.filter(r => r.status === 'Belum Dikerjakan').length;
+            document.getElementById('statSedang').innerText = active.filter(r => r.status === 'Sedang Dikerjakan').length;
+            document.getElementById('statSelesai').innerText = completedCount;
             
-            item['Updated At'] = new Date().toISOString();
-            
-            updateStats();
-            renderCharts();
-            applyFilters();
+            document.getElementById('statHariIni').innerText = active.filter(r => {
+                const d = calculateDaysLeft(r.deadline);
+                return d <= 0 && r.status !== 'Selesai';
+            }).length;
 
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'update', data: item })
-                });
-                showToast(`Status diperbarui ke: ${newStatus}`);
-            } catch (err) {
-                console.error(err);
-                showToast('Gagal memperbarui status ke server', 'error');
-            }
+            document.getElementById('statH3').innerText = active.filter(r => {
+                const d = calculateDaysLeft(r.deadline);
+                return d > 0 && d <= 3 && r.status !== 'Selesai';
+            }).length;
+
+            // Badges Angka di Navigasi Sidebar
+            document.getElementById('badge-nav-all').innerText = active.length;
+            document.getElementById('badge-nav-pending').innerText = pendingCount;
+            document.getElementById('badge-nav-completed').innerText = completedCount;
         }
 
-        function applyFilters() {
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const statusVal = document.getElementById('filterStatus').value;
-            const priorityVal = document.getElementById('filterPriority').value;
-            const categoryVal = document.getElementById('filterCategory').value;
-            const sourceVal = document.getElementById('filterSource').value;
-            const sortBy = document.getElementById('sortBy').value;
-
-            let filtered = reportsData.filter(item => {
-                const st = getItemStatus(item);
-                if(currentTab === 'active' && st === 'Selesai') return false;
-                if(currentTab === 'completed' && st !== 'Selesai') return false;
-
-                if(statusVal && st !== statusVal) return false;
-                
-                const pr = item.priority || item.Priority || '';
-                if(priorityVal && pr !== priorityVal) return false;
-
-                const cat = item.category || item.Category || '';
-                if(categoryVal && cat !== categoryVal) return false;
-
-                const src = item.source || item.Source || '';
-                if(sourceVal && src !== sourceVal) return false;
-
-                if(searchVal) {
-                    const titleMatch = (item.title || item.Title || '').toLowerCase().includes(searchVal);
-                    const catMatch = (item.category || item.Category || '').toLowerCase().includes(searchVal);
-                    const notesMatch = (item.notes || item.Notes || '').toLowerCase().includes(searchVal);
-                    const urlMatch = (item.url || item.URL || '').toLowerCase().includes(searchVal);
-                    if(!titleMatch && !catMatch && !notesMatch && !urlMatch) return false;
-                }
-
-                return true;
-            });
-
-            filtered.sort((a, b) => {
-                const deadA = a.deadline || a.Deadline || '';
-                const deadB = b.deadline || b.Deadline || '';
-                if(sortBy === 'deadline') return new Date(deadA) - new Date(deadB);
-                if(sortBy === 'deadline_desc') return new Date(deadB) - new Date(deadA);
-                
-                const createA = a['Created At'] || a['created_at'] || 0;
-                const createB = b['Created At'] || b['created_at'] || 0;
-                if(sortBy === 'newest') return new Date(createB) - new Date(createA);
-                if(sortBy === 'oldest') return new Date(createA) - new Date(createB);
-                return 0;
-            });
-
-            renderTable(filtered);
-        }
-
-        function switchTab(tab) {
-            currentTab = tab;
-
-            const dashboardView = document.getElementById('dashboardView');
-            const tableView = document.getElementById('tableView');
-            const readmeView = document.getElementById('readmeView');
-            const pageTitle = document.getElementById('pageTitle');
-            const pageSubtitle = document.getElementById('pageSubtitle');
-
-            ['tabDashboard', 'tabAll', 'tabActive', 'tabCompleted', 'tabReadme'].forEach(id => {
-                const btn = document.getElementById(id);
-                if(btn) btn.className = "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors";
-            });
-
-            dashboardView.classList.add('hidden');
-            tableView.classList.add('hidden');
-            readmeView.classList.add('hidden');
-
-            if(tab === 'dashboard') {
-                document.getElementById('tabDashboard').className = "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white";
-                dashboardView.classList.remove('hidden');
-                pageTitle.innerText = "Dashboard Panel";
-                pageSubtitle.innerText = "Analisis data visual dan rekapan statistik report toko.";
-            } else if(tab === 'readme') {
-                document.getElementById('tabReadme').className = "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium bg-amber-600 text-white";
-                readmeView.classList.remove('hidden');
-                pageTitle.innerText = "READ ME / Documentation";
-                pageSubtitle.innerText = "Panduan cara penggunaan sistem dan pengelolaan report.";
-            } else {
-                tableView.classList.remove('hidden');
-
-                if(tab === 'all') {
-                    document.getElementById('tabAll').className = "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white";
-                    pageTitle.innerText = "Daftar Semua Report";
-                    pageSubtitle.innerText = "Menampilkan seluruh arsip laporan tanpa batasan status.";
-                } else if(tab === 'active') {
-                    document.getElementById('tabActive').className = "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white";
-                    pageTitle.innerText = "Report Belum Selesai";
-                    pageSubtitle.innerText = "Menampilkan laporan yang masih membutuhkan tindakan / penanganan.";
-                } else if(tab === 'completed') {
-                    document.getElementById('tabCompleted').className = "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white";
-                    pageTitle.innerText = "Report Selesai";
-                    pageSubtitle.innerText = "Menampilkan seluruh daftar laporan yang telah tuntas dikerjakan.";
-                }
-            }
-
-            applyFilters();
-        }
-
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterPriority').value = '';
-            document.getElementById('filterCategory').value = '';
-            document.getElementById('filterSource').value = '';
-            document.getElementById('sortBy').value = 'deadline';
-            applyFilters();
-        }
-
-        function openModal(editData = null) {
+        // MODAL & CRUD
+        function openModal(id = null) {
             const modal = document.getElementById('reportModal');
             const form = document.getElementById('reportForm');
-            modal.classList.remove('hidden');
-
-            if(editData) {
+            
+            if (id) {
+                const item = reports.find(r => r.id === id);
                 document.getElementById('modalTitle').innerText = 'Edit Report';
-                document.getElementById('formId').value = getItemID(editData);
-                document.getElementById('formTitle').value = editData.title || editData.Title || '';
-                document.getElementById('formUrl').value = editData.url || editData.URL || '';
-                
-                const rawDeadline = editData.deadline || editData.Deadline || '';
-                let formattedFormDate = rawDeadline;
-                if(rawDeadline.includes('T')) {
-                    formattedFormDate = rawDeadline.split('T')[0];
-                }
-                document.getElementById('formDeadline').value = formattedFormDate;
-
-                document.getElementById('formStatus').value = getItemStatus(editData);
-                document.getElementById('formPriority').value = editData.priority || editData.Priority || 'Sedang';
-                document.getElementById('formCategory').value = editData.category || editData.Category || 'Operasional';
-                document.getElementById('formSource').value = editData.source || editData.Source || 'Manual';
-                document.getElementById('formNotes').value = editData.notes || editData.Notes || '';
+                document.getElementById('reportId').value = item.id;
+                document.getElementById('formTitle').value = item.title;
+                document.getElementById('formUrl').value = item.url;
+                document.getElementById('formDeadline').value = formatDateForInput(item.deadline);
+                document.getElementById('formStatus').value = item.status;
+                document.getElementById('formPriority').value = item.priority;
+                document.getElementById('formCategory').value = item.category;
+                document.getElementById('formSource').value = item.source;
+                document.getElementById('formNotes').value = item.notes;
             } else {
                 document.getElementById('modalTitle').innerText = 'Tambah Report Baru';
                 form.reset();
-                document.getElementById('formId').value = '';
-                document.getElementById('formDeadline').value = new Date().toISOString().split('T')[0];
+                document.getElementById('reportId').value = '';
+                document.getElementById('formDeadline').value = getFormattedDate(0);
             }
+            modal.classList.remove('hidden');
         }
 
         function closeModal() {
             document.getElementById('reportModal').classList.add('hidden');
         }
 
-        async function handleFormSubmit(e) {
+        async function saveReport(e) {
             e.preventDefault();
-            const id = document.getElementById('formId').value;
+            const id = document.getElementById('reportId').value;
+            const title = document.getElementById('formTitle').value;
+            const url = document.getElementById('formUrl').value;
+            const deadline = formatDateForInput(document.getElementById('formDeadline').value);
+            const status = document.getElementById('formStatus').value;
+            const priority = document.getElementById('formPriority').value;
+            const category = document.getElementById('formCategory').value;
+            const source = document.getElementById('formSource').value;
+            const notes = document.getElementById('formNotes').value;
+
+            const action = id ? "UPDATE" : "CREATE";
             const payload = {
-                ID: id || 'ID_' + Date.now(),
-                Title: document.getElementById('formTitle').value,
-                URL: document.getElementById('formUrl').value,
-                Deadline: document.getElementById('formDeadline').value,
-                Status: document.getElementById('formStatus').value,
-                Priority: document.getElementById('formPriority').value,
-                Category: document.getElementById('formCategory').value,
-                Source: document.getElementById('formSource').value,
-                Notes: document.getElementById('formNotes').value,
-                'Updated At': new Date().toISOString()
+                action: action,
+                id: id || Date.now().toString(),
+                title, url, deadline, status, priority, category, source, notes
             };
 
-            const action = id ? 'update' : 'create';
+            showToast("Menyimpan ke Spreadsheet...");
             closeModal();
-            showFullScreenLoader(true, "Menyimpan perubahan ke Google Spreadsheet...");
+            showLoading(true);
 
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: action, data: payload })
-                });
+            const result = await postToAPI(payload);
+            if (result.status === "success") {
                 showToast(id ? 'Report berhasil diperbarui!' : 'Report baru berhasil disimpan!');
-                fetchData();
-            } catch (err) {
-                console.error(err);
-                showToast('Gagal menyimpan data', 'error');
-                showFullScreenLoader(false);
+                fetchReportsFromAPI();
+            } else {
+                showLoading(false);
             }
         }
 
-        function editReport(id) {
-            const item = reportsData.find(r => String(getItemID(r)) === String(id));
-            if(item) openModal(item);
-        }
-
-        async function deleteReport(id) {
-            if(!confirm('Apakah Anda yakin ingin menghapus report ini secara permanen?')) return;
-            showFullScreenLoader(true, "Menghapus report dari Google Spreadsheet...");
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'delete', id: id })
-                });
-                showToast('Report berhasil dihapus!');
-                fetchData();
-            } catch (err) {
-                console.error(err);
-                showToast('Gagal menghapus data', 'error');
-                showFullScreenLoader(false);
+        async function archiveReport(id) {
+            showToast("Mengarsip data...");
+            showLoading(true);
+            const result = await postToAPI({ action: "ARCHIVE", id: id });
+            if (result.status === "success") {
+                showToast("Report berhasil dipindahkan ke arsip");
+                fetchReportsFromAPI();
+            } else {
+                showLoading(false);
             }
         }
 
-        function getDaysDiff(deadlineStr) {
-            if(!deadlineStr) return 999;
-            const today = new Date();
-            today.setHours(0,0,0,0);
-            const d = new Date(deadlineStr);
-            d.setHours(0,0,0,0);
-            return Math.ceil((d - today) / (1000 * 60 * 60 * 24));
+        function confirmDelete(id) {
+            deleteTargetId = id;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            deleteTargetId = null;
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+            if (deleteTargetId) {
+                const id = deleteTargetId;
+                closeDeleteModal();
+                showToast("Menghapus data...");
+                showLoading(true);
+
+                const result = await postToAPI({ action: "DELETE", id: id });
+                if (result.status === "success") {
+                    showToast("Report berhasil dihapus secara permanen");
+                    fetchReportsFromAPI();
+                } else {
+                    showLoading(false);
+                }
+            }
+        });
+
+        // UTILS
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterPriority').value = '';
+            document.getElementById('filterCategory').value = '';
+            document.getElementById('filterSource').value = '';
+            document.getElementById('sortBy').value = 'deadlineAsc';
+            currentPage = 1;
+            renderApp();
         }
 
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text);
-            showToast('Link berhasil disalin ke clipboard!');
+            showToast('Link berhasil disalin ke clipboard');
         }
 
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('toast');
-            const icon = document.getElementById('toastIcon');
-            document.getElementById('toastMessage').innerText = msg;
-
-            if(type === 'error') {
-                icon.className = 'fa-solid fa-circle-xmark text-rose-400';
+        function showLoading(state) {
+            const overlay = document.getElementById('loadingOverlay');
+            const refreshIcon = document.getElementById('refreshIcon');
+            if (state) {
+                overlay.classList.remove('hidden');
+                if (refreshIcon) refreshIcon.classList.add('animate-spin');
             } else {
-                icon.className = 'fa-solid fa-circle-check text-emerald-400';
+                overlay.classList.add('hidden');
+                if (refreshIcon) refreshIcon.classList.remove('animate-spin');
             }
+        }
 
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
             toast.classList.remove('translate-y-20', 'opacity-0');
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
         }
 
-        // FUNGSI KONTROL FULL SCREEN OVERLAY LOADING ANIMATION
-        function showFullScreenLoader(show, msg = "Sinkronisasi data Google Spreadsheet...") {
-            const loader = document.getElementById('fullScreenLoader');
-            const loaderMsg = document.getElementById('loaderMessage');
-            if (!loader) return;
-
-            if (msg) loaderMsg.innerText = msg;
-
-            if (show) {
-                loader.classList.remove('hidden');
-                setTimeout(() => {
-                    loader.classList.remove('opacity-0');
-                    loader.classList.add('opacity-100');
-                }, 10);
-            } else {
-                loader.classList.remove('opacity-100');
-                loader.classList.add('opacity-0');
-                setTimeout(() => {
-                    loader.classList.add('hidden');
-                }, 500);
-            }
+        function escapeHtml(text) {
+            return text ? String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;") : '';
         }
 
-        function showLoading(show) {
-            const loader = document.getElementById('loadingState');
-            const tbody = document.getElementById('reportTableBody');
-            if(show) {
-                loader.classList.remove('hidden');
-                tbody.innerHTML = '';
-            } else {
-                loader.classList.add('hidden');
-            }
-        }
-
-        function escapeHtml(str) {
-            if(!str) return '';
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
+        // INITIAL LOAD
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchReportsFromAPI();
+        });
     </script>
 </body>
 </html>
